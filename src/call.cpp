@@ -51,6 +51,7 @@ map<size_t, bfn> builtins = {
     { crc64("car"), builtin::car },
     { crc64("cdr"), builtin::cdr },
     { crc64("crc"), builtin::crc }, 
+    { crc64("shell"), builtin::shell },
     { crc64("partial-sum-int"), builtin::partial_sum_int },
 };
 

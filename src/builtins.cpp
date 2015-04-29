@@ -37,6 +37,8 @@ namespace builtin {
         
         for(; ptr; ptr = ptr->tail) {
             switch (ptr->type) {
+                case T_LIST:
+                    ptr->replace(eval(ptr));
                 case T_ATOM:
                     switch (ptr->trait) {
                         case TR_UINT:
@@ -48,11 +50,6 @@ namespace builtin {
                         case TR_FLOAT:
                             fvalue += ptr->get<double>();
                             break;
-                    }
-                    break;
-                case T_LIST: {
-                        obj* val = eval(ptr);
-                        result->value += val->value;
                     }
                     break;
             }
@@ -83,6 +80,8 @@ namespace builtin {
         
         for(; ptr; ptr = ptr->tail) {
             switch (ptr->type) {
+                case T_LIST:
+                    ptr->replace(eval(ptr));
                 case T_ATOM:
                     switch (ptr->trait) {
                         case TR_UINT:
@@ -111,11 +110,6 @@ namespace builtin {
                             break;
                     }
                     break;
-                case T_LIST: {
-                        obj* val = eval(ptr);
-                        result->value += val->value;
-                    }
-                    break;
             }
         }
         
@@ -139,6 +133,20 @@ namespace builtin {
         lolwut->type = T_ATOM;
         lolwut->trait = TR_UINT;
         int a = system("reset");
+        lolwut->value = a;
+        return lolwut;
+    }
+    obj* shell(obj* ptr) {
+        obj* lolwut = new obj;
+        lolwut->type = T_ATOM;
+        lolwut->trait = TR_UINT;
+        string cmd;
+        if (!ptr->value)
+            cmd = "/bin/sh";
+        else for (ptr = (obj*)ptr->value; ptr->tail; ptr = ptr->tail)
+            cmd += (char)ptr->get<size_t>();
+        
+        int a = system(cmd.c_str());
         lolwut->value = a;
         return lolwut;
     }

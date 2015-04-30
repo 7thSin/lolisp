@@ -51,9 +51,22 @@ struct obj {
         type = o->type;
         trait = o->trait;
         value = o->value;
-        tail = o->tail;
     }
 };
+
+std::vector<obj*> mempool;
+
+inline obj* new_obj() {
+    obj* o = new obj;
+    mempool.push_back(o);
+    return o;
+}
+
+void freeall() {
+    for (auto const& it : mempool)
+        delete it;
+    mempool.clear();
+}
 
 void objdump(const obj* o, int line = 0, const char* label = "()") {
     cout << "Object at " << line << ":" << label << endl;

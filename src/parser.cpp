@@ -21,9 +21,9 @@
 // Reads a string and generates a s-expr tree
 obj* lisp_tree(const string& src, size_t& i) {
     const size_t len = src.length();
-    obj* base = new obj;
+    obj* base = new_obj();
     base->type = T_LIST;
-    base->value = (size_t) new obj;
+    base->value = (size_t) new_obj();
     obj* ptr = (obj*)base->value;
     string token;
     
@@ -37,7 +37,7 @@ obj* lisp_tree(const string& src, size_t& i) {
                 token.clear();
                 ptr->value = lisp_tree(src, i)->value;
                 ptr->type = T_LIST;
-                ptr->tail = new obj;
+                ptr->tail = new_obj();
                 ptr = ptr->tail;
                 break;
             case '"':

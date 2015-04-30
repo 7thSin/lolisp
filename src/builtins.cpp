@@ -30,7 +30,7 @@ namespace builtin {
     // uint has a non-zero radix, int zero exponent, double has every entry;
     // Just an idea.
     obj* sum(obj* ptr) {
-        obj* result = new obj;
+        obj* result = new_obj();
         size_t uintvalue = 0;
         long long intvalue = 0;
         double fvalue = 0;
@@ -76,7 +76,7 @@ namespace builtin {
     }
     // Read above
     obj* sub(obj* ptr) {
-        obj* result = new obj;
+        obj* result = new_obj();
         size_t uintvalue = 0;
         long long intvalue = 0;
         double fvalue = 0;
@@ -137,7 +137,7 @@ namespace builtin {
         return result;
     }
     obj* clear(obj* ptr) {
-        obj* lolwut = new obj;
+        obj* lolwut = new_obj();
         lolwut->type = T_ATOM;
         lolwut->trait = TR_UINT;
         int a = system("reset");
@@ -145,7 +145,7 @@ namespace builtin {
         return lolwut;
     }
     obj* shell(obj* ptr) {
-        obj* lolwut = new obj;
+        obj* lolwut = new_obj();
         lolwut->type = T_ATOM;
         lolwut->trait = TR_UINT;
         string cmd;
@@ -161,7 +161,7 @@ namespace builtin {
     obj* exit(obj* ptr) {
         long long estatus = ptr->get<long long>();
         ::exit(estatus);
-        return new obj;
+        return new_obj();
     }
     obj* print(obj* ptr) {
         for (obj* sxpr = (obj*)ptr; sxpr->tail; sxpr = sxpr->tail) {
@@ -171,54 +171,54 @@ namespace builtin {
         return ptr;
     }
     obj* list(obj* ptr) {
-        obj* ls = new obj;
-        obj* base = new obj;
+        obj* ls = new_obj();
+        obj* base = new_obj();
         base->type = T_LIST;
         base->set(ls);
         for(; ptr->tail; ptr = ptr->tail) {
             ls->replace(eval(ptr));
-            ls->tail = new obj;
+            ls->tail = new_obj();
             ls = ls->tail;
         }
         return base;
     }
     obj* stringify(obj* ptr) {
-        obj* ls = new obj;
-        obj* base = new obj;
+        obj* ls = new_obj();
+        obj* base = new_obj();
         base->type = T_LIST;
         base->set(ls);
         for(; ptr->tail; ptr = ptr->tail) {
             ls->replace(eval(ptr));
             ls->trait = TR_STRING;
-            ls->tail = new obj;
+            ls->tail = new_obj();
             ls = ls->tail;
         }
         return base;
     }
     obj* car(obj* ptr) {
         if (ptr->type != T_LIST)
-            return new obj;
+            return new_obj();
         obj* res = eval(ptr);
-        obj* carl = new obj;
+        obj* carl = new_obj();
         carl->replace(res->get<obj*>());
         carl->tail = NULL;
         return carl;
     }
     obj* cdr(obj* ptr) {
         if (ptr->type != T_LIST)
-            return new obj;
+            return new_obj();
         obj* tail = ((obj*)eval(ptr)->value)->tail;
-        obj* ls = new obj;
+        obj* ls = new_obj();
         ls->type = T_LIST;
         ls->trait = ptr->trait;
         ls->set(tail);
         return ls;
     }
     obj* partial_sum_int(obj* ptr) {
-        obj* result = new obj;
+        obj* result = new_obj();
         result->type = T_ATOM;
         result->trait = TR_INT;
-        obj* base = new obj;
+        obj* base = new_obj();
         base->set(result);
         base->type = T_LIST;
         ptr = eval(ptr);
@@ -231,10 +231,10 @@ namespace builtin {
                             result->value += ptr->get<long long>();
                             break;
                         default: {
-                            result->tail = new obj;
+                            result->tail = new_obj();
                             result = result->tail;
                             result->replace(ptr);
-                            result->tail = new obj;
+                            result->tail = new_obj();
                             result = result->tail;
                             result->type = T_ATOM;
                             result->trait = TR_INT;
@@ -251,7 +251,7 @@ namespace builtin {
         return base;
     }
     obj* crc(obj* ptr) {
-        obj* result = new obj;
+        obj* result = new_obj();
         string str;
         for (ptr = (obj*)ptr->value; ptr->tail; ptr = ptr->tail)
             str += (char)ptr->get<size_t>();
@@ -262,12 +262,12 @@ namespace builtin {
     }
     obj* lambda(obj* ptr) {
         if (ptr->type != T_LIST)
-            return new obj;
+            return new_obj();
         ptr->trait = TR_LAMBDA;
         return ptr;
     }
     obj* evalc(obj* ptr) {
-        obj* ret = new obj;
+        obj* ret = new_obj();
         for (; ptr->tail; ptr = ptr->tail)
             ret = ::eval(ptr);
         return ret;
@@ -275,19 +275,24 @@ namespace builtin {
     obj* defun(obj* ptr) {
         size_t name = ptr->value;
         ptr = ptr->tail;
-        ptr = lambda(ptr);
-        defines[name] = ptr;
+        obj* def = new obj;
+        def->replace(ptr);
+        def = lambda(def);
+        defines[name] = def;
         return ptr;
     }
     obj* define(obj* ptr) {
         size_t name = ptr->value;
-        ptr = ptr->tail;
-        defines[name] = ptr;
+        ptr = eval(ptr->tail);
+        obj* def = new obj;
+        def->replace(ptr);
+        defines[name] = def;
         objdump(ptr);
         return ptr;
     }
     obj* funcall(obj* ptr) {
-        return ::call(::eval(ptr));
+        ptr->replace(::call(::eval(ptr)));
+        return ptr;
     }
     obj* objdump(obj* ptr) {
         obj* eptr = eval(ptr);

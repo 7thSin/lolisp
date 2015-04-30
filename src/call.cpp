@@ -34,7 +34,7 @@ obj* eval(obj* ptr) {
                     return call(ptr);
             }
     }
-    return new obj;
+    return new_obj();
 }
 
 map<size_t, obj*> defines;
@@ -71,7 +71,7 @@ inline obj* call(obj* ptr) {
     if (!func) {
         obj* define = defines[ptr->value];
         if (!define)
-            return new obj;
+            return new_obj();
         else
             return call(define);
     }

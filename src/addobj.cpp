@@ -68,22 +68,22 @@ void addobj(obj*& ptr, const string& token) {
             break;
     }
     ptr->type = T_ATOM;
-    ptr->tail = new obj;
+    ptr->tail = new_obj();
     ptr = ptr->tail;
 }
 
 void addstring(obj*& ptr, const string& src, size_t& i) {
-    obj* chars = new obj;
+    obj* chars = new_obj();
     ptr->set((size_t)chars);
     ptr->type = T_LIST;
     ptr->trait = TR_STRING; 
-    ptr->tail = new obj;
+    ptr->tail = new_obj();
     ptr = ptr->tail;
     for (bool escape = false; i < src.length(); i++) {
         if (src[i] == '"' && !escape) return;
         if (src[i] == '\\') escape = true;
         else escape = false;
-        chars->tail = new obj;
+        chars->tail = new_obj();
         chars->type = T_ATOM;
         chars->trait = TR_STRING;
         chars->value = (size_t)src[i];

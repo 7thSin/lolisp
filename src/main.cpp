@@ -22,8 +22,7 @@
 #include <string>
 #include <cmath>
 #include <map>
-#include <list>
-#include <sstream>
+#include <vector>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <regex>
@@ -50,18 +49,19 @@ template <typename F> inline F recast(size_t& t) {
 #include "addobj.cpp"
 #include "parser.cpp"
 #include "exprtrace.cpp"
-#include "memory.cpp"
 #include "call.cpp"
 
 int main() {
     const char* prompt = "λ) ";
     while (true) {
-        string cmdline = readline(prompt);
-        add_history(cmdline.c_str());
+        char* cmdline = readline(prompt);
+        add_history(cmdline);
         size_t i = 0;
-        string initialcmd = "(print (eval " + cmdline + "))";
+        string initialcmd = "(print (eval " + string(cmdline) + "))";
+        free(cmdline);
         obj* tree = lisp_tree(initialcmd, i);
         //cout << exprtrace(tree) << endl;
         eval((obj*)tree);
+        freeall();
     }
 }

@@ -46,8 +46,7 @@ obj* lisp_tree(const string& src, size_t& i) {
                 break;
             case ')':
                 addobj(ptr, token);
-                base->tail = lisp_tree(src, i);
-                break;
+                return base;
             case ' ':
                 addobj(ptr, token);
                 token.clear();

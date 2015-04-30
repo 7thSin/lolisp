@@ -50,6 +50,7 @@ template <typename F> inline F recast(size_t& t) {
 #include "addobj.cpp"
 #include "parser.cpp"
 #include "exprtrace.cpp"
+#include "memory.cpp"
 #include "call.cpp"
 
 int main() {
@@ -58,8 +59,9 @@ int main() {
         string cmdline = readline(prompt);
         add_history(cmdline.c_str());
         size_t i = 0;
-        string initialcmd = "(print " + cmdline + ")";
+        string initialcmd = "(print (eval " + cmdline + "))";
         obj* tree = lisp_tree(initialcmd, i);
+        //cout << exprtrace(tree) << endl;
         eval((obj*)tree);
     }
 }

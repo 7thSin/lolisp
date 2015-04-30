@@ -22,8 +22,15 @@
 enum { T_NIL = 0, T_ATOM = 1, T_LIST = 2 };
 const char* types[] = { "NIL", "ATOM", "LIST" };
 // Traits
-enum { TR_INT = 0, TR_UINT, TR_FLOAT, TR_SYMBOL, TR_STRING };
-const char* traits[] = { "INT", "UINT", "FLOAT", "SYMBOL", "STRING" };
+enum {
+    TR_INT = 0,
+    TR_UINT = 1, 
+    TR_FLOAT = 2, 
+    TR_SYMBOL = 3, 
+    TR_STRING = 4, 
+    TR_LAMBDA = 5,
+};
+const char* traits[] = { "INT", "UINT", "FLOAT", "SYMBOL", "STRING", "LAMBDA" };
 // Main data structure
 struct obj {
     unsigned    type    = 0;

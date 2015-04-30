@@ -37,8 +37,12 @@ namespace builtin {
         
         for(; ptr; ptr = ptr->tail) {
             switch (ptr->type) {
-                case T_LIST:
-                    ptr->replace(eval(ptr));
+                case T_LIST: {
+                    obj* v = eval(ptr);
+                    ptr->type = v->type;
+                    ptr->trait = v->trait;
+                    ptr->value = v->value;
+                }
                 case T_ATOM:
                     switch (ptr->trait) {
                         case TR_UINT:
@@ -80,8 +84,12 @@ namespace builtin {
         
         for(; ptr; ptr = ptr->tail) {
             switch (ptr->type) {
-                case T_LIST:
-                    ptr->replace(eval(ptr));
+                case T_LIST:{
+                    obj* v = eval(ptr);
+                    ptr->type = v->type;
+                    ptr->trait = v->trait;
+                    ptr->value = v->value;
+                }
                 case T_ATOM:
                     switch (ptr->trait) {
                         case TR_UINT:
@@ -149,6 +157,11 @@ namespace builtin {
         int a = system(cmd.c_str());
         lolwut->value = a;
         return lolwut;
+    }
+    obj* exit(obj* ptr) {
+        long long estatus = ptr->get<long long>();
+        ::exit(estatus);
+        return new obj;
     }
     obj* print(obj* ptr) {
         for (obj* sxpr = (obj*)ptr; sxpr->tail; sxpr = sxpr->tail) {
@@ -246,5 +259,42 @@ namespace builtin {
         result->type = T_ATOM;
         result->trait = TR_UINT;
         return result;
+    }
+    obj* lambda(obj* ptr) {
+        if (ptr->type != T_LIST)
+            return new obj;
+        ptr->trait = TR_LAMBDA;
+        return ptr;
+    }
+    obj* evalc(obj* ptr) {
+        obj* ret = new obj;
+        for (; ptr->tail; ptr = ptr->tail)
+            ret = ::eval(ptr);
+        return ret;
+    }
+    obj* defun(obj* ptr) {
+        size_t name = ptr->value;
+        ptr = ptr->tail;
+        ptr = lambda(ptr);
+        defines[name] = ptr;
+        return ptr;
+    }
+    obj* define(obj* ptr) {
+        size_t name = ptr->value;
+        ptr = ptr->tail;
+        defines[name] = ptr;
+        objdump(ptr);
+        return ptr;
+    }
+    obj* funcall(obj* ptr) {
+        return ::call(::eval(ptr));
+    }
+    obj* objdump(obj* ptr) {
+        obj* eptr = eval(ptr);
+        objdump(eptr, 0, "from REPL");
+        return eptr;
+    }
+    obj* quote(obj* ptr) {
+        return ptr;
     }
 }

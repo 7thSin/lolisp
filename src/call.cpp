@@ -37,6 +37,8 @@ obj* eval(obj* ptr) {
     return new obj;
 }
 
+map<size_t, obj*> defines;
+
 #include "builtins.cpp"
 
 // Collisions are improbable, but may happen.
@@ -52,13 +54,26 @@ map<size_t, bfn> builtins = {
     { crc64("cdr"), builtin::cdr },
     { crc64("crc"), builtin::crc }, 
     { crc64("shell"), builtin::shell },
+    { crc64("exit"), builtin::exit },
     { crc64("partial-sum-int"), builtin::partial_sum_int },
+    { crc64("objdump"), builtin::objdump },
+    { crc64("lambda"), builtin::lambda },
+    { crc64("quote"), builtin::quote },
+    { crc64("eval"), builtin::evalc },
+    { crc64("funcall"), builtin::funcall },
+    { crc64("defun"), builtin::defun },
+    { crc64("define"), builtin::define },
 };
 
 inline obj* call(obj* ptr) {
     ptr = (obj*)ptr->value;
     bfn func = builtins[ptr->value];
-    if (!func)
-        return new obj;
+    if (!func) {
+        obj* define = defines[ptr->value];
+        if (!define)
+            return new obj;
+        else
+            return call(define);
+    }
     return func(ptr->tail);
 }

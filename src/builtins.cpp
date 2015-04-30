@@ -302,4 +302,29 @@ namespace builtin {
     obj* quote(obj* ptr) {
         return ptr;
     }
+    obj* compile_file(obj* ptr) {     
+      if(ptr->trait != TR_STRING)
+	return new_obj();
+      
+      string filename = "";
+      stringstream reader;
+      fstream fp;
+      
+      for (ptr = (obj*)ptr->value; ptr->tail; ptr = ptr->tail)
+	filename += (char)ptr->get<size_t>();
+
+      fp.open(filename, std::ios::in);
+
+      if(!fp)
+	return new_obj();
+
+      reader << fp.rdbuf();
+
+      fp.close();
+      
+      string src = reader.str();
+      size_t i = 0;
+      
+      return ::lisp_tree(src, i);
+    }
 }

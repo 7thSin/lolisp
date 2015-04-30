@@ -19,6 +19,8 @@
 */
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <cmath>
 #include <map>
@@ -26,6 +28,9 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <regex>
+
+using std::stringstream;
+using std::fstream;
 using std::string;
 using std::stoi;
 using std::to_string;

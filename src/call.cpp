@@ -63,6 +63,7 @@ map<size_t, bfn> builtins = {
     { crc64("funcall"), builtin::funcall },
     { crc64("defun"), builtin::defun },
     { crc64("define"), builtin::define },
+    { crc64("compile-file"), builtin::compile_file },
 };
 
 inline obj* call(obj* ptr) {

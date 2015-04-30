@@ -37,8 +37,6 @@ obj* eval(obj* ptr) {
     return new_obj();
 }
 
-map<size_t, obj*> defines;
-
 #include "builtins.cpp"
 
 // Collisions are improbable, but may happen.

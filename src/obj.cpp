@@ -59,6 +59,6 @@ void objdump(const obj* o, int line = 0, const char* label = "()") {
     cout << "* address: " << o << endl;
     cout << "\t  type: " << types[o->type] << endl;
     cout << "\t trait: " << traits[o->trait] << endl;
-    cout << "\t value: " << o->value << endl;
+    cout << "\t value: " << (obj*)o->value << endl;
     cout << "\t  tail: " << o->tail << endl;
 }

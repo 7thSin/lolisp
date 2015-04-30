@@ -267,10 +267,7 @@ namespace builtin {
         return ptr;
     }
     obj* evalc(obj* ptr) {
-        obj* ret = new_obj();
-        for (; ptr->tail; ptr = ptr->tail)
-            ret = ::eval(ptr);
-        return ret;
+        return ::eval(eval(ptr));
     }
     obj* defun(obj* ptr) {
         size_t name = ptr->value;
@@ -307,6 +304,11 @@ namespace builtin {
     obj* objdump(obj* ptr) {
         obj* eptr = eval(ptr);
         objdump(eptr, 0, "from REPL");
+        return eptr;
+    }
+    obj* objdump2(obj* ptr) {
+        obj* eptr = ptr;
+        objdump(eptr, 2, "from REPL");
         return eptr;
     }
     obj* defdump(obj* ptr) {

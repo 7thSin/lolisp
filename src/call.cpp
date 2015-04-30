@@ -56,6 +56,7 @@ map<size_t, bfn> builtins = {
     { crc64("exit"), builtin::exit },
     { crc64("partial-sum-int"), builtin::partial_sum_int },
     { crc64("objdump"), builtin::objdump },
+    { crc64("nobjdump"), builtin::objdump2 },
     { crc64("lambda"), builtin::lambda },
     { crc64("quote"), builtin::quote },
     { crc64("eval"), builtin::evalc },
@@ -72,13 +73,18 @@ map<size_t, bfn> builtins = {
 inline obj* call(obj* ptr) {
     switch (ptr->type) {
         case T_LIST: {
+            obj* base = ptr;
             ptr = (obj*)ptr->value;
             bfn func = builtins[ptr->value];
-            if (!func) switch (ptr->trait) {
+            if (!func) switch (base->trait) {
                 case TR_LAMBDA:
                     return call_lambda(ptr);
                 default:
-                    return (obj*)defines[ptr->value];
+                    obj* val = defines[ptr->value];
+                    if (val)
+                        return eval(val);
+                    else
+                        return new_obj();
             }
             return func(ptr->tail);
         }

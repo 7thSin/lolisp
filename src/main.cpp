@@ -63,7 +63,7 @@ int main() {
         char* cmdline = readline(prompt);
         add_history(cmdline);
         size_t i = 0;
-        string initialcmd = "(print (eval " + string(cmdline) + "))";
+        string initialcmd = "(print " + string(cmdline) + ")";
         free(cmdline);
         obj* tree = lisp_tree(initialcmd, i);
         //cout << exprtrace(tree) << endl;

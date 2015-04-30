@@ -21,6 +21,7 @@
 typedef obj*(*bfn)(obj*);
 
 inline obj* call(obj* ptr);
+inline obj* call_lambda(obj* ptr);
 
 obj* eval(obj* ptr) {
     switch (ptr->type) {
@@ -36,8 +37,6 @@ obj* eval(obj* ptr) {
     }
     return new_obj();
 }
-
-map<size_t, obj*> defines;
 
 #include "builtins.cpp"
 
@@ -64,17 +63,37 @@ map<size_t, bfn> builtins = {
     { crc64("defun"), builtin::defun },
     { crc64("define"), builtin::define },
     { crc64("compile-file"), builtin::compile_file },
+    { crc64("set"), builtin::set },
+    { crc64("defdump"), builtin::defdump },
+    { crc64("gc-trigger"), builtin::gc_trigger },
+    { crc64("length"), builtin::length },
 };
 
 inline obj* call(obj* ptr) {
-    ptr = (obj*)ptr->value;
-    bfn func = builtins[ptr->value];
-    if (!func) {
-        obj* define = defines[ptr->value];
-        if (!define)
-            return new_obj();
-        else
-            return call(define);
+    switch (ptr->type) {
+        case T_LIST: {
+            ptr = (obj*)ptr->value;
+            bfn func = builtins[ptr->value];
+            if (!func) switch (ptr->trait) {
+                case TR_LAMBDA:
+                    return call_lambda(ptr);
+                default:
+                    return (obj*)defines[ptr->value];
+            }
+            return func(ptr->tail);
+        }
+        break;
+        default:
+            return ptr;
     }
-    return func(ptr->tail);
+    return new_obj();
+}
+
+inline obj* call_lambda(obj* ptr) {
+    obj* ret = new_obj();
+    obj* define = defines[ptr->value];
+    for (; define->tail; define = define->tail) {
+        ret = eval(define);
+    }
+    return ret;
 }

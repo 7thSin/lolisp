@@ -51,6 +51,7 @@ template <typename F> inline F recast(size_t& t) {
 
 #include "hash.cpp"
 #include "obj.cpp"
+#include "gc.cpp"
 #include "addobj.cpp"
 #include "parser.cpp"
 #include "exprtrace.cpp"
@@ -67,6 +68,6 @@ int main() {
         obj* tree = lisp_tree(initialcmd, i);
         //cout << exprtrace(tree) << endl;
         eval((obj*)tree);
-        //freeall(); to be fixed
+        gc_collect();
     }
 }

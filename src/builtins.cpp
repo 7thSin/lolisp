@@ -277,9 +277,10 @@ namespace builtin {
         ptr = ptr->tail;
         obj* def = new obj;
         def->replace(ptr);
+        def->tail = ptr->tail;
         def = lambda(def);
         defines[name] = def;
-        return ptr;
+        return def;
     }
     obj* define(obj* ptr) {
         size_t name = ptr->value;
@@ -287,8 +288,17 @@ namespace builtin {
         obj* def = new obj;
         def->replace(ptr);
         defines[name] = def;
-        objdump(ptr);
         return ptr;
+    }
+    obj* set(obj* ptr) {
+        obj* dest = new_obj();
+        dest->replace(ptr);
+        dest = eval(dest);
+        obj* src = new_obj();
+        src->replace(ptr->tail);
+        src = eval(src);
+        dest->value = src->value;
+        return dest;
     }
     obj* funcall(obj* ptr) {
         ptr->replace(::call(::eval(ptr)));
@@ -299,24 +309,31 @@ namespace builtin {
         objdump(eptr, 0, "from REPL");
         return eptr;
     }
+    obj* defdump(obj* ptr) {
+        for (auto const& it : defines) {
+            objdump(it.second, it.first, "defdump");
+            cout << exprtrace(it.second) << endl;
+        }
+        return ptr;
+    }
     obj* quote(obj* ptr) {
         return ptr;
     }
     obj* compile_file(obj* ptr) {     
       if(ptr->trait != TR_STRING)
-	return new_obj();
+				return new_obj();
       
       string filename = "";
       stringstream reader;
       fstream fp;
       
       for (ptr = (obj*)ptr->value; ptr->tail; ptr = ptr->tail)
-	filename += (char)ptr->get<size_t>();
+				filename += (char)ptr->get<size_t>();
 
       fp.open(filename, std::ios::in);
 
       if(!fp)
-	return new_obj();
+				return new_obj();
 
       reader << fp.rdbuf();
 
@@ -326,5 +343,23 @@ namespace builtin {
       size_t i = 0;
       
       return ::lisp_tree(src, i);
+		}
+	
+	  obj* length(obj* ptr) {
+			ptr = (obj*)ptr->value;
+			ptr = eval(ptr);
+			obj* base = ptr;
+			size_t l;
+			for (l = 0; base->tail; base = base->tail)
+				l++;
+			obj* ret = new_obj();
+			ret->type = T_ATOM;
+			ret->trait = TR_UINT;
+			ret->value = l;
+			return ret;
+    }
+	  obj* gc_trigger(obj* ptr) {
+			gc_collect();
+			return ptr;
     }
 }

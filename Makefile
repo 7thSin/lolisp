@@ -21,3 +21,6 @@ clean:
 
 run:
 	bin/lolisp
+
+valgrind:
+	valgrind bin/lolisp-debug

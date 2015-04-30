@@ -62,6 +62,7 @@ map<size_t, bfn> builtins = {
     { crc64("funcall"), builtin::funcall },
     { crc64("defun"), builtin::defun },
     { crc64("define"), builtin::define },
+    { crc64("compile-file"), builtin::compile_file },
     { crc64("set"), builtin::set },
     { crc64("defdump"), builtin::defdump },
     { crc64("gc-trigger"), builtin::gc_trigger },

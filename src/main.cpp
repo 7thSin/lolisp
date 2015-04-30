@@ -62,6 +62,6 @@ int main() {
         obj* tree = lisp_tree(initialcmd, i);
         //cout << exprtrace(tree) << endl;
         eval((obj*)tree);
-        freeall();
+        //freeall(); to be fixed
     }
 }

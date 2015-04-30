@@ -1,0 +1,2 @@
+(defun quit (exit 0))
+(defun load (eval (compile-file ("pls wait"))))

@@ -69,7 +69,7 @@ namespace builtin {
         }
         else {
             result->trait = TR_UINT;
-            result->set(intvalue);
+            result->set(uintvalue);
         }
         result->type = T_ATOM;
         return result;
@@ -131,7 +131,7 @@ namespace builtin {
         }
         else {
             result->trait = TR_UINT;
-            result->set(intvalue);
+            result->set(uintvalue);
         }
         result->type = T_ATOM;
         return result;

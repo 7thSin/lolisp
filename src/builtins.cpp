@@ -1,4 +1,4 @@
-/*
+z/*
 * builtins.cpp
 * This file is part of lolisp
 *
@@ -320,46 +320,42 @@ namespace builtin {
         return ptr;
     }
     obj* compile_file(obj* ptr) {     
-      if(ptr->trait != TR_STRING)
-				return new_obj();
-      
-      string filename = "";
-      stringstream reader;
-      fstream fp;
-      
-      for (ptr = (obj*)ptr->value; ptr->tail; ptr = ptr->tail)
-				filename += (char)ptr->get<size_t>();
+        if (ptr->trait != TR_STRING)
+            return new_obj();
 
-      fp.open(filename, std::ios::in);
+        string filename = "";
+        stringstream reader;
+        fstream fp;
 
-      if(!fp)
-				return new_obj();
+        for (ptr = (obj*)ptr->value; ptr->tail; ptr = ptr->tail)
+        filename += (char)ptr->get<size_t>();
 
-      reader << fp.rdbuf();
+        fp.open(filename, std::ios::in);
+        if (!fp)
+            return new_obj();
 
-      fp.close();
-      
-      string src = reader.str();
-      size_t i = 0;
-      
-      return ::lisp_tree(src, i);
-		}
-	
-	  obj* length(obj* ptr) {
-			ptr = (obj*)ptr->value;
-			ptr = eval(ptr);
-			obj* base = ptr;
-			size_t l;
-			for (l = 0; base->tail; base = base->tail)
-				l++;
-			obj* ret = new_obj();
-			ret->type = T_ATOM;
-			ret->trait = TR_UINT;
-			ret->value = l;
-			return ret;
+        reader << fp.rdbuf();
+        fp.close();
+
+        string src = reader.str();
+        size_t i = 0;
+        return ::lisp_tree(src, i);
     }
-	  obj* gc_trigger(obj* ptr) {
-			gc_collect();
-			return ptr;
+    obj* length(obj* ptr) {
+	    ptr = (obj*)ptr->value;
+	    ptr = eval(ptr);
+	    obj* base = ptr;
+	    size_t l;
+	    for (l = 0; base->tail; base = base->tail)
+		    l++;
+	    obj* ret = new_obj();
+	    ret->type = T_ATOM;
+	    ret->trait = TR_UINT;
+	    ret->value = l;
+	    return ret;
+    }
+    obj* gc_trigger(obj* ptr) {
+	    gc_collect();
+	    return ptr;
     }
 }

@@ -66,14 +66,21 @@ map<size_t, bfn> builtins = {
 };
 
 inline obj* call(obj* ptr) {
-    ptr = (obj*)ptr->value;
-    bfn func = builtins[ptr->value];
-    if (!func) {
-        obj* define = defines[ptr->value];
-        if (!define)
-            return new_obj();
-        else
-            return call(define);
+    switch (ptr->type) {
+        case T_LIST: {
+            ptr = (obj*)ptr->value;
+            bfn func = builtins[ptr->value];
+            if (!func) {
+                obj* define = defines[ptr->value];
+                if (!define)
+                    return new_obj();
+                else
+                    return call(define);
+            }
+            return func(ptr->tail);
+        }
+        case T_ATOM:
+            return ptr;
     }
-    return func(ptr->tail);
+    return new_obj();
 }

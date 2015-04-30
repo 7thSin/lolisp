@@ -287,7 +287,6 @@ namespace builtin {
         obj* def = new obj;
         def->replace(ptr);
         defines[name] = def;
-        objdump(ptr);
         return ptr;
     }
     obj* funcall(obj* ptr) {

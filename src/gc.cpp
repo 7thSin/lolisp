@@ -37,24 +37,14 @@ void gc_sweep() {
     mempool.clear();
 }
 
-void gc_mark(obj* base) {
-    obj* ptr = base;
-    while (ptr) {
+void gc_mark(obj* ptr) {
+    for (; ptr; ptr = ptr->tail) {
         switch (ptr->type) {
-            case T_ATOM:
-                mempool[ptr] = false;
-                break;
             case T_LIST:
-                if (ptr->value) {
-                    gc_mark((obj*)ptr->value);
-                    mempool[ptr] = false;
-                }
-                break;
-            case T_NIL:
+                gc_mark((obj*)ptr->value);
+            default:
                 mempool[ptr] = false;
-                break;
         }
-        ptr = ptr->tail;
     }
 }
 

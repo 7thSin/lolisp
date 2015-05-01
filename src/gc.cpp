@@ -29,6 +29,14 @@ inline obj* new_obj() {
     return o;
 }
 
+inline obj* new_obj(unsigned type, unsigned trait = 0) {
+    obj* o = new obj;
+    o->type = type;
+    o->trait = trait;
+    mempool[o] = true;
+    return o;
+}
+
 void gc_sweep() {
     for (auto const& it : mempool) {
         if (it.second)
@@ -41,7 +49,7 @@ void gc_mark(obj* ptr) {
     for (; ptr; ptr = ptr->tail) {
         switch (ptr->type) {
             case T_LIST:
-                gc_mark((obj*)ptr->value);
+                gc_mark((obj*)ptr->data.value);
             default:
                 mempool[ptr] = false;
         }

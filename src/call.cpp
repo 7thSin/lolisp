@@ -29,10 +29,10 @@ obj* eval(obj* ptr) {
             return ptr;
         case T_LIST:
             switch (ptr->trait) {
-                case TR_STRING:
-                    return ptr;
-                default:
+                case TR_LAMBDA:
                     return call(ptr);
+                default:
+                    return ptr;
             }
     }
     return new_obj();
@@ -45,6 +45,10 @@ obj* eval(obj* ptr) {
 map<size_t, bfn> builtins = {
     { crc64("+"), builtin::sum },
     { crc64("-"), builtin::sub },
+    { crc64("*"), builtin::mult },
+    { crc64("/"), builtin::div },
+    { crc64("="), builtin::eql },
+    { crc64("eq-trait"), builtin::eql_traits },
     { crc64("list"), builtin::list },
     { crc64("string"), builtin::stringify },
     { crc64("clear"), builtin::clear },
@@ -60,7 +64,9 @@ map<size_t, bfn> builtins = {
     { crc64("lambda"), builtin::lambda },
     { crc64("quote"), builtin::quote },
     { crc64("eval"), builtin::evalc },
-    { crc64("funcall"), builtin::funcall },
+    { crc64("symbolp"), builtin::symbolp },
+    { crc64("atomp"), builtin::atomp },
+    { crc64("listp"), builtin::listp },
     { crc64("defun"), builtin::defun },
     { crc64("define"), builtin::define },
     { crc64("compile-file"), builtin::compile_file },
@@ -74,13 +80,13 @@ inline obj* call(obj* ptr) {
     switch (ptr->type) {
         case T_LIST: {
             obj* base = ptr;
-            ptr = (obj*)ptr->value;
-            bfn func = builtins[ptr->value];
+            ptr = ptr->data.ptr;
+            bfn func = builtins[ptr->data.value];
             if (!func) switch (base->trait) {
                 case TR_LAMBDA:
                     return call_lambda(ptr);
                 default:
-                    obj* val = defines[ptr->value];
+                    obj* val = defines[ptr->data.value];
                     if (val)
                         return eval(val);
                     else
@@ -97,7 +103,7 @@ inline obj* call(obj* ptr) {
 
 inline obj* call_lambda(obj* ptr) {
     obj* ret = new_obj();
-    obj* define = defines[ptr->value];
+    obj* define = defines[ptr->data.value];
     for (; define->tail; define = define->tail) {
         ret = eval(define);
     }

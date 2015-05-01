@@ -19,143 +19,219 @@
 */
 
 namespace builtin {
-    // It works nice, but it's too long.
-    // TODO: type-indipendent integer representation
-    // something like (not a floating point number):
-    // struct Num {
-    //    bool sign;
-    //    unsigned exponent;
-    //    unsigned radix;
-    // }
-    // uint has a non-zero radix, int zero exponent, double has every entry;
-    // Just an idea.
+    obj* objdump(obj* ptr) {
+        obj* eptr = eval(ptr);
+        objdump(eptr, 0, "from REPL");
+        return eptr;
+    }
+    obj* objdump2(obj* ptr) {
+        obj* eptr = ptr;
+        objdump(eptr, 2, "from REPL");
+        return eptr;
+    }
+    // Generic sum
+    // Do not expect this to be fast
     obj* sum(obj* ptr) {
-        obj* result = new_obj();
-        size_t uintvalue = 0;
-        long long intvalue = 0;
-        double fvalue = 0;
         
+        Num<std::plus<double>> res;
         for(; ptr; ptr = ptr->tail) {
             switch (ptr->type) {
                 case T_LIST: {
                     obj* v = eval(ptr);
                     ptr->type = v->type;
                     ptr->trait = v->trait;
-                    ptr->value = v->value;
+                    ptr->data.value = v->data.value;
                 }
                 case T_ATOM:
-                    switch (ptr->trait) {
-                        case TR_UINT:
-                            uintvalue += ptr->get<size_t>();
-                            break;
-                        case TR_INT:
-                            intvalue += ptr->get<long long>();
-                            break;
-                        case TR_FLOAT:
-                            fvalue += ptr->get<double>();
-                            break;
-                    }
-                    break;
+                    res.apply(ptr);
             }
         }
-        
-        if (fvalue) {
-            result->trait = TR_FLOAT;
-            result->set(fvalue + uintvalue + intvalue);
-        }
-        else if (intvalue) {
-            result->trait = TR_INT;
-            result->set(uintvalue + intvalue);
-        }
-        else {
-            result->trait = TR_UINT;
-            result->set(uintvalue);
-        }
-        result->type = T_ATOM;
+        obj* result = new_obj(T_ATOM, res.trait);
+        result->data.value = res.get();
         return result;
     }
     // Read above
     obj* sub(obj* ptr) {
-        obj* result = new_obj();
-        size_t uintvalue = 0;
-        long long intvalue = 0;
-        double fvalue = 0;
-        bool first = false;
-        
-        for(; ptr; ptr = ptr->tail) {
+        Num<std::minus<double>> res;
+        res.set(ptr);
+        for(ptr = ptr->tail; ptr; ptr = ptr->tail) {
             switch (ptr->type) {
-                case T_LIST:{
+                case T_LIST: {
                     obj* v = eval(ptr);
                     ptr->type = v->type;
                     ptr->trait = v->trait;
-                    ptr->value = v->value;
+                    ptr->data.value = v->data.value;
                 }
                 case T_ATOM:
-                    switch (ptr->trait) {
-                        case TR_UINT:
-                            if (first)
-                                uintvalue -= ptr->get<size_t>();
-                            else {
-                                uintvalue = ptr->get<size_t>();
-                                first = true;   
-                            }
-                            break;
-                        case TR_INT:
-                            if (first)
-                                intvalue -= ptr->get<long long>();
-                            else {
-                                intvalue = ptr->get<long long>();
-                                first = true;   
-                            }
-                            break;
-                        case TR_FLOAT:
-                            if (first)
-                                fvalue -= ptr->get<double>();
-                            else {
-                                fvalue = ptr->get<double>();
-                                first = true;   
-                            }
-                            break;
-                    }
-                    break;
+                    res.apply(ptr);
             }
         }
-        
-        if (fvalue) {
-            result->trait = TR_FLOAT;
-            result->set(fvalue + uintvalue + intvalue);
+        obj* result = new_obj(T_ATOM, res.trait);
+        result->data.value = res.get();
+        return result;
+    }
+    obj* mult(obj* ptr) {
+        Num<std::multiplies<double>> res;
+        res.value = 1.0;
+        for(; ptr; ptr = ptr->tail) {
+            switch (ptr->type) {
+                case T_LIST: {
+                    obj* v = eval(ptr);
+                    ptr->type = v->type;
+                    ptr->trait = v->trait;
+                    ptr->data.value = v->data.value;
+                }
+                case T_ATOM:
+                    res.apply(ptr);
+            }
         }
-        else if (intvalue) {
-            result->trait = TR_INT;
-            result->set(uintvalue + intvalue);
+        obj* result = new_obj(T_ATOM, res.trait);
+        result->data.value = res.get();
+        return result;
+    }
+    obj* div(obj* ptr) {
+        Num<std::divides<double>> res;
+        res.set(ptr);
+        for (ptr = ptr->tail; ptr; ptr = ptr->tail) {
+            switch (ptr->type) {
+                case T_LIST: {
+                    obj* v = eval(ptr);
+                    ptr->type = v->type;
+                    ptr->trait = v->trait;
+                    ptr->data.value = v->data.value;
+                }
+                case T_ATOM:
+                    res.apply(ptr);
+            }
         }
-        else {
-            result->trait = TR_UINT;
-            result->set(uintvalue);
+        obj* result = new_obj(T_ATOM, res.trait);
+        result->data.value = res.get();
+        return result;
+    }
+    obj* eql(obj* ptr) {
+        obj* result = new_obj();
+        obj* last = ptr;
+        for (ptr = ptr->tail; ptr; ptr = ptr->tail) {
+            switch (ptr->type) {
+                case T_LIST: {
+                    obj* v = eval(ptr);
+                    ptr->type = v->type;
+                    ptr->trait = v->trait;
+                    ptr->data.value = v->data.value;
+                }
+                case T_ATOM:
+                    if (last->data.value != ptr->data.value)
+                        return result;
+                    if (last->type != ptr->type)
+                        return result;
+                    if (last->trait != ptr->trait)
+                        return result;
+                    last = ptr;
+            }
         }
+        result->trait = TR_UINT;
+        result->data.value = 1;
+        result->type = T_ATOM;
+        return result;
+    }
+    obj* eql_traits(obj* ptr) {
+        obj* result = new_obj();
+        obj* last = ptr;
+        for (ptr = ptr->tail; ptr; ptr = ptr->tail) {
+            switch (ptr->type) {
+                case T_LIST: {
+                    obj* v = eval(ptr);
+                    ptr->type = v->type;
+                    ptr->trait = v->trait;
+                    ptr->data.value = v->data.value;
+                }
+                case T_ATOM:
+                    if (last->trait != ptr->trait)
+                        return result;
+                    last = ptr;
+            }
+        }
+        result->trait = TR_UINT;
+        result->data.value = 1;
+        result->type = T_ATOM;
+        return result;
+    }
+    obj* atomp(obj* ptr) {
+        obj* result = new_obj();
+        for (; ptr; ptr = ptr->tail) {
+            switch (ptr->type) {
+                case T_LIST: {
+                    obj* v = eval(ptr);
+                    ptr->type = v->type;
+                    ptr->trait = v->trait;
+                    ptr->data.value = v->data.value;
+                }
+                case T_ATOM:
+                    if (ptr->type != T_ATOM)
+                        return result;
+            }
+        }
+        result->trait = TR_UINT;
+        result->data.value = 1;
+        result->type = T_ATOM;
+        return result;
+    }
+    obj* listp(obj* ptr) {
+        obj* result = new_obj();
+        for (; ptr; ptr = ptr->tail) {
+            switch (ptr->type) {
+                case T_LIST: {
+                    obj* v = eval(ptr);
+                    ptr->type = v->type;
+                    ptr->trait = v->trait;
+                    ptr->data.value = v->data.value;
+                }
+                case T_ATOM:
+                    if (ptr->type != T_LIST)
+                        return result;
+            }
+        }
+        result->trait = TR_UINT;
+        result->data.value = 1;
+        result->type = T_ATOM;
+        return result;
+    }
+    obj* symbolp(obj* ptr) {
+        obj* result = new_obj();
+        for (; ptr; ptr = ptr->tail) {
+            switch (ptr->type) {
+                case T_LIST: {
+                    obj* v = eval(ptr);
+                    ptr->type = v->type;
+                    ptr->trait = v->trait;
+                    ptr->data.value = v->data.value;
+                }
+                case T_ATOM:
+                    if (ptr->type != T_ATOM &&
+                        ptr->trait == TR_SYMBOL)
+                        return result;
+            }
+        }
+        result->trait = TR_UINT;
+        result->data.value = 1;
         result->type = T_ATOM;
         return result;
     }
     obj* clear(obj* ptr) {
-        obj* lolwut = new_obj();
-        lolwut->type = T_ATOM;
-        lolwut->trait = TR_UINT;
+        obj* lolwut = new_obj(T_ATOM, TR_UINT);
         int a = system("reset");
-        lolwut->value = a;
+        lolwut->data.value = a;
         return lolwut;
     }
     obj* shell(obj* ptr) {
-        obj* lolwut = new_obj();
-        lolwut->type = T_ATOM;
-        lolwut->trait = TR_UINT;
+        obj* lolwut = new_obj(T_ATOM, TR_UINT);
         string cmd;
-        if (!ptr->value)
+        if (!ptr->data.value)
             cmd = "/bin/sh";
-        else for (ptr = (obj*)ptr->value; ptr->tail; ptr = ptr->tail)
+        else for (ptr = ptr->data.ptr; ptr->tail; ptr = ptr->tail)
             cmd += (char)ptr->get<size_t>();
-        
         int a = system(cmd.c_str());
-        lolwut->value = a;
+        lolwut->data.value = a;
         return lolwut;
     }
     obj* exit(obj* ptr) {
@@ -164,16 +240,15 @@ namespace builtin {
         return new_obj();
     }
     obj* print(obj* ptr) {
-        for (obj* sxpr = (obj*)ptr; sxpr->tail; sxpr = sxpr->tail) {
-            obj* o = eval((obj*)sxpr);
-            cout << exprtrace(o) << endl;
+        for (; ptr->tail; ptr = ptr->tail) {
+            obj* o = eval(ptr);
+            cout << ::print(o) << endl;
         }
         return ptr;
     }
     obj* list(obj* ptr) {
         obj* ls = new_obj();
-        obj* base = new_obj();
-        base->type = T_LIST;
+        obj* base = new_obj(T_LIST);
         base->set(ls);
         for(; ptr->tail; ptr = ptr->tail) {
             ls->replace(eval(ptr));
@@ -184,8 +259,7 @@ namespace builtin {
     }
     obj* stringify(obj* ptr) {
         obj* ls = new_obj();
-        obj* base = new_obj();
-        base->type = T_LIST;
+        obj* base = new_obj(T_LIST);
         base->set(ls);
         for(; ptr->tail; ptr = ptr->tail) {
             ls->replace(eval(ptr));
@@ -199,36 +273,28 @@ namespace builtin {
         if (ptr->type != T_LIST)
             return new_obj();
         obj* res = eval(ptr);
-        obj* carl = new_obj();
-        carl->replace(res->get<obj*>());
-        carl->tail = NULL;
-        return carl;
+        return res->data.ptr;
     }
     obj* cdr(obj* ptr) {
         if (ptr->type != T_LIST)
             return new_obj();
-        obj* tail = ((obj*)eval(ptr)->value)->tail;
-        obj* ls = new_obj();
-        ls->type = T_LIST;
-        ls->trait = ptr->trait;
+        obj* tail = eval(ptr)->tail;
+        obj* ls = new_obj(T_LIST, ptr->trait);
         ls->set(tail);
-        return ls;
+        return tail;
     }
     obj* partial_sum_int(obj* ptr) {
-        obj* result = new_obj();
-        result->type = T_ATOM;
-        result->trait = TR_INT;
-        obj* base = new_obj();
+        obj* result = new_obj(T_ATOM, TR_INT);
+        obj* base = new_obj(T_LIST);
         base->set(result);
-        base->type = T_LIST;
         ptr = eval(ptr);
-        for (ptr = (obj*)ptr->value; ptr->tail; ptr = ptr->tail) {
+        for (ptr = ptr->data.ptr; ptr->tail; ptr = ptr->tail) {
             switch (ptr->type) {
                 case T_ATOM:
                     switch (ptr->trait) {
                         case TR_UINT:
                         case TR_INT:
-                            result->value += ptr->get<long long>();
+                            result->data.value += ptr->get<long long>();
                             break;
                         default: {
                             result->tail = new_obj();
@@ -243,7 +309,7 @@ namespace builtin {
                     break;
                 case T_LIST: {
                         obj* val = eval(ptr);
-                        result->value += val->value;
+                        result->data.value += val->data.value;
                     }
                     break;
             }
@@ -251,13 +317,8 @@ namespace builtin {
         return base;
     }
     obj* crc(obj* ptr) {
-        obj* result = new_obj();
-        string str;
-        for (ptr = (obj*)ptr->value; ptr->tail; ptr = ptr->tail)
-            str += (char)ptr->get<size_t>();
-        result->value = crc64(str);
-        result->type = T_ATOM;
-        result->trait = TR_UINT;
+        obj* result = new_obj(T_ATOM, TR_UINT);
+        result->data.value = crc64(make_stdstring(ptr));
         return result;
     }
     obj* lambda(obj* ptr) {
@@ -267,10 +328,14 @@ namespace builtin {
         return ptr;
     }
     obj* evalc(obj* ptr) {
-        return ::eval(eval(ptr));
+        obj* o = new_obj();
+        ptr = eval(ptr);
+        for (; ptr->tail; ptr = ptr->tail)
+            o = eval(ptr);
+        return o;
     }
     obj* defun(obj* ptr) {
-        size_t name = ptr->value;
+        size_t name = ptr->data.value;
         ptr = ptr->tail;
         obj* def = new obj;
         def->replace(ptr);
@@ -280,12 +345,13 @@ namespace builtin {
         return def;
     }
     obj* define(obj* ptr) {
-        size_t name = ptr->value;
+        size_t name = ptr->data.value;
         ptr = eval(ptr->tail);
         obj* def = new obj;
         def->replace(ptr);
+        def->tail = new_obj();
         defines[name] = def;
-        return ptr;
+        return def;
     }
     obj* set(obj* ptr) {
         obj* dest = new_obj();
@@ -294,22 +360,8 @@ namespace builtin {
         obj* src = new_obj();
         src->replace(ptr->tail);
         src = eval(src);
-        dest->value = src->value;
+        dest->data.value = src->data.value;
         return dest;
-    }
-    obj* funcall(obj* ptr) {
-        ptr->replace(::call(::eval(ptr)));
-        return ptr;
-    }
-    obj* objdump(obj* ptr) {
-        obj* eptr = eval(ptr);
-        objdump(eptr, 0, "from REPL");
-        return eptr;
-    }
-    obj* objdump2(obj* ptr) {
-        obj* eptr = ptr;
-        objdump(eptr, 2, "from REPL");
-        return eptr;
     }
     obj* defdump(obj* ptr) {
         for (auto const& it : defines) {
@@ -325,34 +377,39 @@ namespace builtin {
         if(ptr->trait != TR_STRING)
             return new_obj();
 
-        string filename = "";
+        string filename = make_stdstring(ptr);
         stringstream reader;
         fstream fp;
-
-        for (ptr = (obj*)ptr->value; ptr->tail; ptr = ptr->tail)
-            filename += (char)ptr->get<size_t>();
 
         fp.open(filename, std::ios::in);
         if (!fp)
             return new_obj();
-        reader << fp.rdbuf();
+        while (reader << fp.rdbuf());
         fp.close();
 
         string src = reader.str();
         size_t i = 0;
-        return ::lisp_tree(src, i);
+        obj* o = new_obj();
+        obj* base = o;
+        while (i < src.length()) {
+            obj* result = ::lisp_tree(src, i);
+            if (result->data.ptr->type != T_NIL) {
+                o->replace(result);
+                o->tail = new_obj();
+                o = o->tail;
+            }
+        }
+        return base;
     }
     obj* length(obj* ptr) {
-	    ptr = (obj*)ptr->value;
+	    ptr = ptr->data.ptr;
 	    ptr = eval(ptr);
 	    obj* base = ptr;
 	    size_t l;
 	    for (l = 0; base->tail; base = base->tail)
 		    l++;
-	    obj* ret = new_obj();
-	    ret->type = T_ATOM;
-	    ret->trait = TR_UINT;
-	    ret->value = l;
+	    obj* ret = new_obj(T_ATOM, TR_UINT);
+	    ret->data.value = l;
 	    return ret;
     }
     obj* gc_trigger(obj* ptr) {

@@ -28,6 +28,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <regex>
+#include <functional>
 
 using std::stringstream;
 using std::fstream;
@@ -45,12 +46,13 @@ void printerr(const string& src, unsigned long& i) {
     std::cout << '^' << std::endl;
 }
 
-template <typename F> inline F recast(size_t& t) {
+template <typename F, typename T> inline F recast(T& t) {
     return *reinterpret_cast<F*>(&t);
 }
 
 #include "hash.cpp"
 #include "obj.cpp"
+#include "listops.cpp"
 #include "gc.cpp"
 #include "addobj.cpp"
 #include "parser.cpp"

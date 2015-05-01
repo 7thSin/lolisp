@@ -23,8 +23,9 @@ obj* lisp_tree(const string& src, size_t& i) {
     const size_t len = src.length();
     obj* base = new_obj();
     base->type = T_LIST;
-    base->value = (size_t) new_obj();
-    obj* ptr = (obj*)base->value;
+    base->trait = TR_LAMBDA;
+    base->data.ptr = new_obj();
+    obj* ptr = base->data.ptr;
     string token;
     
     // Get to the beginning of the s-expression
@@ -35,8 +36,9 @@ obj* lisp_tree(const string& src, size_t& i) {
         switch (src[i]) {
             case '(':
                 token.clear();
-                ptr->value = lisp_tree(src, i)->value;
+                ptr->data.ptr = lisp_tree(src, i)->data.ptr;
                 ptr->type = T_LIST;
+                ptr->trait = TR_LAMBDA;
                 ptr->tail = new_obj();
                 ptr = ptr->tail;
                 break;

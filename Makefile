@@ -20,7 +20,7 @@ clean:
 	rm -vr bin
 
 run:
-	bin/lolisp
+	bin/$(OUTPUT)
 
 valgrind:
-	valgrind bin/lolisp-debug
+	valgrind bin/$(OUTPUT)-debug

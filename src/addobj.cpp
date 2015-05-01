@@ -86,7 +86,7 @@ void addstring(obj*& ptr, const string& src, size_t& i) {
         chars->tail = new_obj();
         chars->type = T_ATOM;
         chars->trait = TR_STRING;
-        chars->value = (size_t)src[i];
+        chars->data.value = (size_t)src[i];
         chars = chars->tail;
     }
 }

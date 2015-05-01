@@ -18,12 +18,13 @@
 * along with lolisp. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "addobj.cpp"
+
 // Reads a string and generates a s-expr tree
 obj* lisp_tree(const string& src, size_t& i) {
     const size_t len = src.length();
     obj* base = new_obj();
     base->type = T_LIST;
-    base->trait = TR_LAMBDA;
     base->data.ptr = new_obj();
     obj* ptr = base->data.ptr;
     string token;
@@ -38,8 +39,7 @@ obj* lisp_tree(const string& src, size_t& i) {
                 token.clear();
                 ptr->data.ptr = lisp_tree(src, i)->data.ptr;
                 ptr->type = T_LIST;
-                ptr->trait = TR_LAMBDA;
-                ptr->tail = new_obj();
+                //ptr->tail = new_obj();
                 ptr = ptr->tail;
                 break;
             case '"':

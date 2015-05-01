@@ -1,0 +1,5 @@
+#include "obj.cpp"
+#include "functions.cpp"
+#include "allocation.cpp"
+#include "gc.cpp"
+#include "num.cpp"

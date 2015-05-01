@@ -39,25 +39,11 @@ using std::cout;
 using std::endl;
 using std::map;
 
-void printerr(const string& src, unsigned long& i) {
-    std::cout << src << std::endl;
-    for (unsigned k = 0; k < i; k++)
-    std::cout << ' ';
-    std::cout << '^' << std::endl;
-}
-
-template <typename F, typename T> inline F recast(T& t) {
-    return *reinterpret_cast<F*>(&t);
-}
-
 #include "hash.cpp"
-#include "obj.cpp"
-#include "listops.cpp"
-#include "gc.cpp"
-#include "addobj.cpp"
-#include "parser.cpp"
-#include "exprtrace.cpp"
-#include "call.cpp"
+#include "object/include.h"
+#include "parser/lisp_tree.cpp"
+#include "print.cpp"
+#include "eval.cpp"
 
 int main() {
     const char* prompt = "λ) ";

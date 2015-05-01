@@ -20,23 +20,6 @@
 
 // Mark and sweep garbage collection
 
-std::map<obj*, bool> mempool;
-map<size_t, obj*> defines;
-
-inline obj* new_obj() {
-    obj* o = new obj;
-    mempool[o] = true;
-    return o;
-}
-
-inline obj* new_obj(unsigned type, unsigned trait = 0) {
-    obj* o = new obj;
-    o->type = type;
-    o->trait = trait;
-    mempool[o] = true;
-    return o;
-}
-
 void gc_sweep() {
     for (auto const& it : mempool) {
         if (it.second)

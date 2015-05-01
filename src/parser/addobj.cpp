@@ -74,19 +74,30 @@ void addobj(obj*& ptr, const string& token) {
 
 void addstring(obj*& ptr, const string& src, size_t& i) {
     obj* chars = new_obj();
-    ptr->set((size_t)chars);
+    ptr->data.ptr = chars;
     ptr->type = T_LIST;
     ptr->trait = TR_STRING; 
-    ptr->tail = new_obj();
+    ptr->tail = new_nil();
     ptr = ptr->tail;
     for (bool escape = false; i < src.length(); i++) {
-        if (src[i] == '"' && !escape) return;
-        if (src[i] == '\\') escape = true;
-        else escape = false;
-        chars->tail = new_obj();
+        char buf = src[i];
+        if (escape) {
+            switch (buf) {
+                case 'n':
+                    buf = '\n';
+                    break;
+            }
+            escape = false;
+        }
+        else if (buf == '"') return;
+        else if (buf == '\\') {
+            escape = true;
+            continue;
+        }
+        chars->tail = new_nil();
         chars->type = T_ATOM;
         chars->trait = TR_STRING;
-        chars->data.value = (size_t)src[i];
+        chars->data.value = (size_t)buf;
         chars = chars->tail;
     }
 }

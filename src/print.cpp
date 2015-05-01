@@ -23,57 +23,55 @@
 string print(obj* base) {
     obj* ptr = base;
     string out;
-    while (ptr->tail) {
-        switch (ptr->type) {
-            case T_ATOM:
-                switch (ptr->trait) {
-                    case TR_STRING:
-                        out += string("'") + (char)ptr->data.value + "'";
-                        break;
-                    case TR_FLOAT:
-                        out += to_string(recast<double>(ptr->data.value));
-                        break;
-                    case TR_INT:
-                        out += to_string(recast<signed long long>(ptr->data.value));
-                        break;
-                    case TR_UINT:
-                        out += to_string(ptr->data.value);
-                        break;
-                    case TR_SYMBOL: {
-                        string* name = &symcache[ptr->data.ptr];
-                        if (!name)
-                            out += "#S" + to_string(ptr->data.value);
-                        else
-                            out += *name;
-                        break;
-                    }
-                    default:
-                        out += to_string(ptr->data.value);
+    switch (ptr->type) {
+        case T_ATOM:
+            switch (ptr->trait) {
+                case TR_STRING:
+                    out += string("'") + (char)ptr->data.value + "'";
+                    break;
+                case TR_FLOAT:
+                    out += to_string(recast<double>(ptr->data.value));
+                    break;
+                case TR_INT:
+                    out += to_string(recast<signed long long>(ptr->data.value));
+                    break;
+                case TR_UINT:
+                    out += to_string(ptr->data.value);
+                    break;
+                case TR_SYMBOL: {
+                    string* name = &symcache[ptr->data.ptr];
+                    if (!name)
+                        out += "#S" + to_string(ptr->data.value);
+                    else
+                        out += *name;
+                    break;
                 }
-                break;
-            case T_LIST:
-                if (ptr->data.ptr) {
-                    if (ptr->trait == TR_STRING) {
-                        out += make_stdstring(ptr);
-                    }
-                    else {
-                        out += '(';
-                        out += print(ptr->data.ptr);
-                        out.back() = ')';
-                    }
+                default:
+                    out += to_string(ptr->data.value);
+            }
+            break;
+        case T_LIST:
+            if (ptr->data.ptr) {
+                if (ptr->trait == TR_STRING) {
+                    out += make_stdstring(ptr);
                 }
-                else
-                    out += "NIL";
-                break;
-            case T_NIL:
+                else {
+                    out += '(';
+                    for (descend(ptr); ptr->tail; advance(ptr))
+                        out += print(ptr);
+                    out.back() = ')';
+                }
+            }
+            else
                 out += "NIL";
-                break;
-            default:
-                out += "?";
-        }
-        out += " ";
-        ptr = ptr->tail;
+            break;
+        case T_NIL:
+            out += "NIL";
+            break;
+        default:
+            out += "?";
     }
+    out += " ";
     return out;
 }
 

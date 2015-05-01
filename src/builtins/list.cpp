@@ -245,10 +245,11 @@ obj* car(obj* ptr) {
 obj* cdr(obj* ptr) {
     if (ptr->type != T_LIST)
         return new_obj();
-    obj* tail = eval(ptr)->tail;
-    obj* ls = new_obj(T_LIST, ptr->trait);
-    ls->set(tail);
-    return tail;
+    obj* rest = eval(ptr);
+    descend(rest);
+    obj* ls = new_obj(T_LIST);
+    ls->set(rest->tail);
+    return ls;
 }
 obj* partial_sum_int(obj* ptr) {
     obj* result = new_obj(T_ATOM, TR_INT);

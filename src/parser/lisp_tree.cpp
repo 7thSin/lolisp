@@ -39,7 +39,7 @@ obj* lisp_tree(const string& src, size_t& i) {
                 token.clear();
                 ptr->data.ptr = lisp_tree(src, i)->data.ptr;
                 ptr->type = T_LIST;
-                //ptr->tail = new_obj();
+                ptr->tail = new_nil();
                 ptr = ptr->tail;
                 break;
             case '"':

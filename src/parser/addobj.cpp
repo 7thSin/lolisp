@@ -41,6 +41,7 @@ void addobj(obj*& ptr, const string& token) {
         case RE_SYMBOL:
             ptr->trait = TR_SYMBOL;
             ptr->set(crc64(token));
+            symcache[ptr->data.ptr] = token;
             break;
         case RE_INT:
             ptr->trait = TR_INT;
@@ -68,7 +69,7 @@ void addobj(obj*& ptr, const string& token) {
             break;
     }
     ptr->type = T_ATOM;
-    ptr->tail = new_obj();
+    ptr->tail = new_nil();
     ptr = ptr->tail;
 }
 

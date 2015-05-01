@@ -39,6 +39,14 @@ string print(obj* base) {
                     case TR_UINT:
                         out += to_string(ptr->data.value);
                         break;
+                    case TR_SYMBOL: {
+                        string* name = &symcache[ptr->data.ptr];
+                        if (!name)
+                            out += "#S" + to_string(ptr->data.value);
+                        else
+                            out += *name;
+                        break;
+                    }
                     default:
                         out += to_string(ptr->data.value);
                 }
@@ -92,6 +100,14 @@ string exprtrace(obj* base) {
                     case TR_UINT:
                         out += to_string(ptr->data.value);
                         break;
+                    case TR_SYMBOL: {
+                        string* name = &symcache[ptr->data.ptr];
+                        if (!name)
+                            out += "#S" + to_string(ptr->data.value);
+                        else
+                            out += *name;
+                        break;
+                    }
                     default:
                         out += to_string(ptr->data.value);
                 }

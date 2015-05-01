@@ -1,5 +1,5 @@
 /*
-* builtins.cpp
+* list.cpp
 * This file is part of lolisp
 *
 * Copyright (C) 2015 - Rei <https://github.com/sovietspaceship>
@@ -32,14 +32,8 @@ obj* objdump2(obj* ptr) {
 // Do not expect this to be fast
 obj* sum(obj* ptr) {
     Num<std::plus<double>> res;
-    for(; ptr; ptr = ptr->tail) {
+    for iterate_eval(ptr) {
         switch (ptr->type) {
-            case T_LIST: {
-                obj* v = eval(ptr);
-                ptr->type = v->type;
-                ptr->trait = v->trait;
-                ptr->data.value = v->data.value;
-            }
             case T_ATOM:
                 res.apply(ptr);
         }
@@ -52,14 +46,8 @@ obj* sum(obj* ptr) {
 obj* sub(obj* ptr) {
     Num<std::minus<double>> res;
     res.set(ptr);
-    for(ptr = ptr->tail; ptr; ptr = ptr->tail) {
+    for iterate_eval(ptr) {
         switch (ptr->type) {
-            case T_LIST: {
-                obj* v = eval(ptr);
-                ptr->type = v->type;
-                ptr->trait = v->trait;
-                ptr->data.value = v->data.value;
-            }
             case T_ATOM:
                 res.apply(ptr);
         }
@@ -71,14 +59,8 @@ obj* sub(obj* ptr) {
 obj* mult(obj* ptr) {
     Num<std::multiplies<double>> res;
     res.value = 1.0;
-    for(; ptr; ptr = ptr->tail) {
+    for iterate_eval(ptr) {
         switch (ptr->type) {
-            case T_LIST: {
-                obj* v = eval(ptr);
-                ptr->type = v->type;
-                ptr->trait = v->trait;
-                ptr->data.value = v->data.value;
-            }
             case T_ATOM:
                 res.apply(ptr);
         }
@@ -90,14 +72,8 @@ obj* mult(obj* ptr) {
 obj* div(obj* ptr) {
     Num<std::divides<double>> res;
     res.set(ptr);
-    for (ptr = ptr->tail; ptr; ptr = ptr->tail) {
+    for iterate_eval(ptr) {
         switch (ptr->type) {
-            case T_LIST: {
-                obj* v = eval(ptr);
-                ptr->type = v->type;
-                ptr->trait = v->trait;
-                ptr->data.value = v->data.value;
-            }
             case T_ATOM:
                 res.apply(ptr);
         }
@@ -243,7 +219,7 @@ obj* list(obj* ptr) {
     base->set(ls);
     for(; ptr->tail; ptr = ptr->tail) {
         ls->replace(eval(ptr));
-        ls->tail = new_obj();
+        ls->tail = new_nil();
         ls = ls->tail;
     }
     return base;
@@ -326,16 +302,13 @@ obj* defun(obj* ptr) {
     def->tail = ptr->tail;
     def = lambda(def);
     defines[name] = def;
-    return def;
+    return new_obj(T_ATOM);
 }
 obj* define(obj* ptr) {
     size_t name = ptr->data.value;
     ptr = eval(ptr->tail);
-    obj* def = new obj;
-    def->replace(ptr);
-    def->tail = new_nil();
-    defines[name] = def;
-    return def;
+    defines[name] = ptr;
+    return new_obj(T_ATOM);
 }
 obj* set(obj* ptr) {
     obj* dest = new_nil();
@@ -349,6 +322,7 @@ obj* set(obj* ptr) {
 }
 obj* defdump(obj* ptr) {
     for (auto const& it : defines) {
+        cout << symcache[(obj*)it.first] << endl;
         objdump(it.second, it.first, "defdump");
         cout << exprtrace(it.second) << endl;
     }
@@ -363,6 +337,7 @@ obj* format(obj* ptr) {
     bool control = false;
     for (; fmt->tail; advance(fmt)) {
         if (control) {
+            arg = eval(arg);
             switch (fmt->data.value) {
                 case 'd':
                     cout << arg->get<long long>();

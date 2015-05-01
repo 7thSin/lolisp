@@ -41,8 +41,8 @@ using std::map;
 
 #include "hash.cpp"
 #include "object/include.h"
-#include "parser/lisp_tree.cpp"
 #include "print.cpp"
+#include "parser/lisp_tree.cpp"
 #include "eval.cpp"
 
 int main() {

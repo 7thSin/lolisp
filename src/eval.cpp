@@ -26,16 +26,32 @@ obj* eval(obj* ptr);
 #include "builtins/include.h"
 
 inline obj* call(obj* ptr);
-inline obj* call_lambda(obj* ptr);
+inline obj* call_lambda(obj* ptr, obj* args);
 
 obj* eval(obj* ptr) {
     switch (ptr->type) {
         case T_ATOM:
-            return ptr;
+            switch (ptr->trait) {
+                case TR_SYMBOL: {
+                    obj* val = defines[ptr->data.value];
+                    if (val) {
+                        obj* o = new_nil();
+                        o->replace(val);
+                        o->tail = ptr->tail;
+                        return o;
+                    }
+                    else
+                        return ptr;
+                    break;
+                }
+                default:
+                    return ptr;
+            }
+            break;
         case T_LIST:
             return call(ptr);
     }
-    return new_obj();
+    return ptr;
 }
 
 inline obj* call(obj* ptr) {
@@ -46,15 +62,15 @@ inline obj* call(obj* ptr) {
             fptr func = builtins[ptr->data.value];
             if (func) 
                 return func(ptr->tail);
-            switch (base->trait) {
+            size_t id = ptr->data.value;
+            obj* define = defines[id];
+            if (!define)
+                return base;
+            switch (define->trait) {
                 case TR_LAMBDA:
-                    return call_lambda(ptr);
+                    return call_lambda(define, ptr->tail);
                 default:
-                    obj* val = defines[ptr->data.value];
-                    if (val)
-                        return eval(val);
-                    else
-                        return ptr;
+                    return base;
             }
         }
         break;
@@ -64,16 +80,23 @@ inline obj* call(obj* ptr) {
     return new_nil();
 }
 
-inline obj* call_lambda(obj* ptr) {
+inline obj* call_lambda(obj* ptr, obj* args) {
     obj* ret = new_obj();
-    objdump(ptr);
-    unsigned id = ptr->data.value;
-    if (!id)
-        return ret;
-    obj* define = defines[id];
-    objdump(define);
-    for (; define->tail; advance(define)) {
-        ret = eval(define);
+    obj* scope = ptr;
+    std::vector<size_t> local;
+    for (descend(scope); scope->tail; advance(scope)) {
+        size_t symb = scope->data.value;
+        obj* o = new_obj();
+        o->replace(args);
+        defines[symb] = o;
+        local.push_back(symb);
+        advance(args);
     }
+    args->tail = new_nil();
+    for (advance(ptr); ptr->tail; advance(ptr)) {
+        ret = eval(ptr);
+    }
+    for (auto const& it : local)
+        defines.erase(it);
     return ret;
 }

@@ -1,5 +1,5 @@
 /*
-* main.cpp
+* hash.cpp
 * This file is part of lolisp
 *
 * Copyright (C) 2014 - Rei <https://github.com/sovietspaceship>
@@ -19,6 +19,7 @@
 */
 
 // Don't remember where this came from, probably public domain.
+
 static const unsigned long long crctab64[256] = {
   0x0000000000000000ULL, 0x7ad870c830358979ULL, 0xf5b0e190606b12f2ULL,
   0x8f689158505e9b8bULL, 0xc038e5739841b68fULL, 0xbae095bba8743ff6ULL,

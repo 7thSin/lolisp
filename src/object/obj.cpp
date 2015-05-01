@@ -25,6 +25,8 @@ struct obj {
     unsigned char    trait  = 0;
     union {
         size_t       value  = 0;
+        long long    ivalue;
+        double       fvalue;
         obj*         ptr;
     } data;
     obj*             tail   = NULL;
@@ -69,9 +71,9 @@ enum {
     TR_STRING = 4,
     TR_LAMBDA = 5,
 };
-const char* traits[] = { 
+const char* traits[] = {
+    "UINT",
     "INT",
-    "UINT", 
     "FLOAT", 
     "SYMBOL", 
     "STRING", 

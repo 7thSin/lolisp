@@ -318,7 +318,14 @@ obj* set(obj* ptr) {
     obj* src = new_nil();
     src->replace(ptr->tail);
     src = eval(src);
-    dest->data.value = src->data.value;
+    switch (ptr->type) {
+        case T_ATOM:
+            dest->data.value = src->data.value;
+            break;
+        case T_LIST:
+            dest->tail = src->data.value;
+            break;
+    }
     return dest;
 }
 obj* defdump(obj* ptr) {

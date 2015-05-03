@@ -1,5 +1,5 @@
 /*
-* include.h
+* define.cpp
 * This file is part of lolisp
 *
 * Copyright (C) 2015 - Rei <https://github.com/sovietspaceship>
@@ -18,8 +18,32 @@
 * along with lolisp. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "obj.cpp"
-#include "allocation.cpp"
-#include "utils.cpp"
-#include "gc.cpp"
-#include "num.cpp"
+obj* defdump(obj* ptr) {
+    for (auto const& it : defines) {
+        cout << symcache[(obj*)it.first] << endl;
+        objdump(it.second, it.first, "defdump");
+        cout << exprtrace(it.second) << endl;
+    }
+    return new_obj();
+}
+
+obj* defun(obj* ptr) {
+    size_t name = ptr->car.ptr->car.value;
+    advance(ptr);
+    ptr->trait = TR_LAMBDA;
+    defines[name] = ptr;
+    defdump(NULL);
+    return new_obj(T_ATOM);
+}
+obj* define(obj* ptr) {
+    size_t name = ptr->car.ptr->car.value;
+    ptr = eval(ptr->cdr->car.ptr);
+    defines[name] = ptr;
+    return new_obj(T_ATOM);
+}
+obj* lambda(obj* ptr) {
+    if (ptr->type != T_LIST)
+        return new_obj();
+    ptr->trait = TR_LAMBDA;
+    return ptr;
+}

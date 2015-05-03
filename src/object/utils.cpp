@@ -18,24 +18,39 @@
 * along with lolisp. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define iterate_eval(ptr) \
-    (ptr = eval(ptr); ptr->tail; ptr = ptr->tail, ptr = eval(ptr))
-
-inline string make_stdstring(const obj* ptr) {
-    string str;
-    for (ptr = ptr->data.ptr; ptr->tail; ptr = ptr->tail)
-        str += (char)ptr->data.value;
-    return str;
-}
-
 inline void advance(obj*& ptr) {
-    ptr = ptr->tail;
+    ptr = ptr->cdr;
 }
 
 inline void descend(obj*& ptr) {
-    ptr = ptr->data.ptr;
+    ptr = ptr->car.ptr;
+}
+
+#define iterate_elements(ls, it) \
+    (obj* _base = ls, *it = _base->car.ptr; \
+    _base->cdr && it;\
+    advance(_base), it = _base->car.ptr)
+    
+#define iterate_list(ptr, it) \
+    (obj* it = ptr; it->cdr; advance(it))
+    
+#define iterate_list_nil(ptr, it) \
+    (obj* it = ptr; it; advance(it))
+
+inline string make_stdstring(obj* ptr) {
+    string str;
+    for iterate_elements(ptr, it)
+        str += (char)it->car.value;
+    return str;
 }
 
 template <typename F, typename T> inline F recast(T& t) {
     return *reinterpret_cast<F*>(&t);
+}
+
+inline obj* cons(obj* head, obj* cdr) {
+    obj* cell;
+    cell->car.ptr = head;
+    cell->cdr = cdr;
+    return cell;
 }

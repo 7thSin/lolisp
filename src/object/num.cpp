@@ -12,7 +12,7 @@
 * lolisp is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
+* GNU General Public License for more decdrs.
 *
 * You should have received a copy of the GNU General Public License
 * along with lolisp. If not, see <http://www.gnu.org/licenses/>.
@@ -31,13 +31,13 @@ struct Num {
     void apply(obj* v) {
         switch (v->trait) {
             case TR_UINT:
-                value = operation(value, v->data.value);
+                value = operation(value, v->car.value);
                 break;
             case TR_INT:
-                value = operation(value, (long long)v->data.value);
+                value = operation(value, (long long)v->car.value);
                 break;
             case TR_FLOAT:
-                value = operation(value, recast<double>(v->data.value));
+                value = operation(value, recast<double>(v->car.value));
                 break;
         }
         if (v->trait > trait)
@@ -47,13 +47,13 @@ struct Num {
         trait = o->trait;
         switch (trait) {
             case TR_INT:
-                value = (double)(long long)o->data.value;
+                value = (double)(long long)o->car.value;
                 break;
             case TR_UINT:
-                value = (double)o->data.value;
+                value = (double)o->car.value;
                 break;
             default:
-                value = recast<double>(o->data.value);
+                value = recast<double>(o->car.value);
         }
     }
     size_t get() {

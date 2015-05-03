@@ -20,8 +20,42 @@
 
 obj* evalc(obj* ptr) {
     obj* o = new_obj();
-    ptr = eval(ptr);
-    for (; ptr->tail; ptr = ptr->tail)
-        o = eval(ptr);
+    for iterate_list(ptr, it)
+        o = eval(it->car.ptr);
     return o;
+}
+
+obj* compile_file(obj* ptr) {
+    if (ptr->car.ptr->trait != TR_CHAR)
+        return new_obj();
+
+    string filename = make_stdstring(ptr->car.ptr);
+    stringstream reader;
+    fstream fp;
+    cout << "Loading " << filename << "... " << std::flush;
+    fp.open(filename, std::ios::in);
+    if (!fp.is_open()) {
+        cout << "file not found." << endl;
+        return new_obj();
+    }
+    cout << endl;
+    while (reader << fp.rdbuf());
+    fp.close();
+
+    string src = reader.str();
+    size_t i = 0;
+    obj* o = new_obj();
+    obj* base = o;
+    base->type = T_LIST;
+    cout << "Compiling... " << std::flush;
+    while (i < src.length()) {
+        obj* result = ::lisp_tree(src, i);
+        if (result->type != T_NIL) {
+            o->car.ptr = result;
+            o->cdr = new_obj();
+            advance(o);
+        }
+    }
+    cout << "done." << endl;
+    return base;
 }

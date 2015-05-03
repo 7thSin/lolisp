@@ -12,7 +12,7 @@
 * lolisp is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
+* GNU General Public License for more decdrs.
 *
 * You should have received a copy of the GNU General Public License
 * along with lolisp. If not, see <http://www.gnu.org/licenses/>.
@@ -26,39 +26,41 @@ string print(obj* base) {
     switch (ptr->type) {
         case T_ATOM:
             switch (ptr->trait) {
-                case TR_STRING:
-                    out += string("'") + (char)ptr->data.value + "'";
+                case TR_CHAR:
+                    out += string("'") + (char)ptr->car.value + "'";
                     break;
                 case TR_FLOAT:
-                    out += to_string(recast<double>(ptr->data.value));
+                    out += to_string(recast<double>(ptr->car.value));
                     break;
                 case TR_INT:
-                    out += to_string(recast<signed long long>(ptr->data.value));
+                    out += to_string(recast<signed long long>(ptr->car.value));
                     break;
                 case TR_UINT:
-                    out += to_string(ptr->data.value);
+                    out += to_string(ptr->car.value);
                     break;
                 case TR_SYMBOL: {
-                    string* name = &symcache[ptr->data.ptr];
-                    if (!name)
-                        out += "#S" + to_string(ptr->data.value);
+                    auto sym_it = symcache.find(ptr->car.ptr);
+                    if (sym_it == symcache.end())
+                        out += "#S" + to_string(ptr->car.value);
                     else
-                        out += *name;
+                        out += sym_it->second;
                     break;
                 }
                 default:
-                    out += to_string(ptr->data.value);
+                    out += to_string(ptr->car.value);
             }
             break;
         case T_LIST:
-            if (ptr->data.ptr) {
-                if (ptr->trait == TR_STRING) {
+            if (ptr->car.ptr) {
+                if (ptr->trait == TR_CHAR) {
+                    out += '"';
                     out += make_stdstring(ptr);
+                    out += '"';
                 }
                 else {
                     out += '(';
-                    for (descend(ptr); ptr->tail; advance(ptr))
-                        out += print(ptr);
+                    for iterate_elements(ptr, it)
+                        out += print(it);
                     out.back() = ')';
                 }
             }
@@ -82,51 +84,49 @@ string print(obj* base) {
 string exprtrace(obj* base) {
     obj* ptr = base;
     string out;
-    while (ptr) {
-        switch (ptr->type) {
-            case T_ATOM:
-                switch (ptr->trait) {
-                    case TR_STRING:
-                        out += string("'") + (char)ptr->data.value + "'";
-                        break;
-                    case TR_FLOAT:
-                        out += to_string(recast<double>(ptr->data.value));
-                        break;
-                    case TR_INT:
-                        out += to_string(recast<signed long long>(ptr->data.value));
-                        break;
-                    case TR_UINT:
-                        out += to_string(ptr->data.value);
-                        break;
-                    case TR_SYMBOL: {
-                        string* name = &symcache[ptr->data.ptr];
-                        if (!name)
-                            out += "#S" + to_string(ptr->data.value);
-                        else
-                            out += *name;
-                        break;
-                    }
-                    default:
-                        out += to_string(ptr->data.value);
+    switch (ptr->type) {
+        case T_ATOM:
+            switch (ptr->trait) {
+                case TR_CHAR:
+                    out += string("'") + (char)ptr->car.value + "'";
+                    break;
+                case TR_FLOAT:
+                    out += to_string(recast<double>(ptr->car.value));
+                    break;
+                case TR_INT:
+                    out += to_string(recast<signed long long>(ptr->car.value));
+                    break;
+                case TR_UINT:
+                    out += to_string(ptr->car.value);
+                    break;
+                case TR_SYMBOL: {
+                    auto sym_it = symcache.find(ptr->car.ptr);
+                    if (sym_it == symcache.end())
+                        out += "#S" + to_string(ptr->car.value);
+                    else
+                        out += sym_it->second;
+                    break;
                 }
-                break;
-            case T_LIST:
-                if (ptr->data.ptr) {
-                    out += '(';
-                    out += exprtrace(ptr->data.ptr);
-                    out.back() = ')';
-                }
-                else
-                    out += "NIL";
-                break;
-            case T_NIL:
+                default:
+                    out += to_string(ptr->car.value);
+            }
+            break;
+        case T_LIST:
+            if (ptr->car.ptr) {
+                out += '(';
+                for iterate_elements(ptr, it)
+                    out += exprtrace(it);
+                out.back() = ')';
+            }
+            else
                 out += "NIL";
-                break;
-            default:
-                out += "?";
-        }
-        out += " ";
-        ptr = ptr->tail;
+            break;
+        case T_NIL:
+            out += "NIL";
+            break;
+        default:
+            out += "?";
     }
+    out += " ";
     return out;
 }

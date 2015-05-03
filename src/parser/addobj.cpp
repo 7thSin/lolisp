@@ -12,7 +12,7 @@
 * lolisp is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
+* GNU General Public License for more decdrs.
 *
 * You should have received a copy of the GNU General Public License
 * along with lolisp. If not, see <http://www.gnu.org/licenses/>.
@@ -30,10 +30,12 @@ static const char* regex[] = {
     NULL,
 };
 
-void addobj(obj*& ptr, const string& token) {
+void add_atom(obj*& base, const string& token) {
     if (!token.length()) return;
-    
+    base->car.ptr = new_obj(T_ATOM);
+    obj* ptr = base->car.ptr;
     unsigned objtype;
+    
     for (objtype = 0; regex[objtype]; objtype++)
         if (std::regex_match(token, std::regex(regex[objtype])))
             break;
@@ -41,7 +43,7 @@ void addobj(obj*& ptr, const string& token) {
         case RE_SYMBOL:
             ptr->trait = TR_SYMBOL;
             ptr->set(crc64(token));
-            symcache[ptr->data.ptr] = token;
+            symcache[ptr->car.ptr] = token;
             break;
         case RE_INT:
             ptr->trait = TR_INT;
@@ -68,18 +70,15 @@ void addobj(obj*& ptr, const string& token) {
             ptr->trait = TR_FLOAT;
             break;
     }
-    ptr->type = T_ATOM;
-    ptr->tail = new_nil();
-    ptr = ptr->tail;
+    base->cdr = new_list();
+    advance(base);
 }
 
-void addstring(obj*& ptr, const string& src, size_t& i) {
-    obj* chars = new_obj();
-    ptr->data.ptr = chars;
-    ptr->type = T_LIST;
-    ptr->trait = TR_STRING; 
-    ptr->tail = new_nil();
-    ptr = ptr->tail;
+obj* addstring(const string& src, size_t& i) {
+    obj* base = new_list();
+    base->trait = TR_CHAR;
+    obj* ptr = base;
+    
     for (bool escape = false; i < src.length(); i++) {
         char buf = src[i];
         if (escape) {
@@ -90,15 +89,16 @@ void addstring(obj*& ptr, const string& src, size_t& i) {
             }
             escape = false;
         }
-        else if (buf == '"') return;
+        else if (buf == '"') return base;
         else if (buf == '\\') {
             escape = true;
             continue;
         }
-        chars->tail = new_nil();
-        chars->type = T_ATOM;
-        chars->trait = TR_STRING;
-        chars->data.value = (size_t)buf;
-        chars = chars->tail;
+        ptr->car.ptr = new_obj(T_ATOM, TR_CHAR);
+        obj* chars = ptr->car.ptr;
+        chars->car.value = (size_t)buf;
+        ptr->cdr = new_list();
+        advance(ptr);
     }
+    return base;
 }

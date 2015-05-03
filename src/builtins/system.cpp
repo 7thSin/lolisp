@@ -1,5 +1,5 @@
 /*
-* gc.cpp
+* system.cpp
 * This file is part of lolisp
 *
 * Copyright (C) 2015 - Rei <https://github.com/sovietspaceship>
@@ -12,36 +12,25 @@
 * lolisp is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more decdrs.
+* GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
 * along with lolisp. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Mark and sweep garbage collection
-
-void gc_sweep() {
-    for (auto const& it : mempool) {
-        if (it.second)
-            delete it.first;
-    }
-    mempool.clear();
+obj* exit(obj* ptr) {
+    ::exit(ptr->car.ptr->car.value);
+    return NULL;
 }
 
-void gc_mark(obj* ptr) {
-    for (; ptr; ptr = ptr->cdr) {
-        switch (ptr->type) {
-            case T_LIST:
-                gc_mark(ptr->car.ptr);
-            default:
-                mempool[ptr] = false;
-        }
-    }
-}
-
-void gc_collect() {
-    for (auto const& it : defines) {
-        gc_mark(it.second);
-    }
-    gc_sweep();
+obj* shell(obj* ptr) {
+    obj* lolwut = new_obj(T_ATOM, TR_UINT);
+    string cmd;
+    if (!ptr->car.ptr)
+        cmd = "/bin/sh";
+    else
+        cmd = make_stdstring(ptr->car.ptr);
+    int a = system(cmd.c_str());
+    lolwut->car.value = a;
+    return lolwut;
 }

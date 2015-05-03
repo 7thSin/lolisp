@@ -33,13 +33,9 @@ obj* eval(obj* ptr) {
         case T_ATOM:
             switch (ptr->trait) {
                 case TR_SYMBOL: {
-                    obj* val = defines[ptr->data.value];
-                    if (val) {
-                        obj* o = new_nil();
-                        o->replace(val);
-                        o->tail = ptr->tail;
-                        return o;
-                    }
+                    auto val_it = defines.find(ptr->car.value);
+                    if (val_it != defines.end())
+                        return val_it->second;
                     else
                         return ptr;
                     break;
@@ -58,17 +54,19 @@ inline obj* call(obj* ptr) {
     switch (ptr->type) {
         case T_LIST: {
             obj* base = ptr;
-            ptr = ptr->data.ptr;
-            fptr func = builtins[ptr->data.value];
-            if (func) 
-                return func(ptr->tail);
-            size_t id = ptr->data.value;
+            ptr = ptr->car.ptr;
+            if (!ptr)
+                return base;
+            size_t id = ptr->car.value;
+            auto func_it = builtins.find(id);
+            if (func_it != builtins.end()) 
+                return func_it->second(base->cdr);
             obj* define = defines[id];
             if (!define)
                 return base;
             switch (define->trait) {
                 case TR_LAMBDA:
-                    return call_lambda(define, ptr->tail);
+                    return call_lambda(define, base->cdr);
                 default:
                     return base;
             }
@@ -77,24 +75,23 @@ inline obj* call(obj* ptr) {
         default:
             return ptr;
     }
-    return new_nil();
 }
 
 inline obj* call_lambda(obj* ptr, obj* args) {
     obj* ret = new_obj();
     obj* scope = ptr;
     std::vector<size_t> local;
-    for (descend(scope); scope->tail; advance(scope)) {
-        size_t symb = scope->data.value;
-        obj* o = new_obj();
-        o->replace(args);
-        defines[symb] = o;
+    scope = scope->car.ptr;
+    for iterate_elements(scope, it) {
+        size_t symb = it->car.value;
+        defines[symb] = args->car.ptr;
         local.push_back(symb);
         advance(args);
     }
-    args->tail = new_nil();
-    for (advance(ptr); ptr->tail; advance(ptr)) {
-        ret = eval(ptr);
+    advance(ptr);
+    for iterate_elements(ptr, it) {
+        cout << exprtrace(it) << endl;
+        ret = eval(it);
     }
     for (auto const& it : local)
         defines.erase(it);

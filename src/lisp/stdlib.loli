@@ -1,3 +1,12 @@
-(defun quit (exit 0))
-(defun load (path) (eval (compile-file path)))
+(defun quit () (exit 0))
+(defun load (path)
+    (eval (compile-file path)))
 (define pi 3.14159265)
+(define *trait-char* 4)
+(define *trait-lambda* 5)
+(defun string (in)
+    (set-trait *trait-char* (list in)))
+(defun lambda (in)
+    (set-trait *trait-lambda* (list in)))
+
+"Done loading."

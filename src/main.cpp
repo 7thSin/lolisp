@@ -54,8 +54,7 @@ int main() {
         string initialcmd = "(print " + string(cmdline) + ")";
         free(cmdline);
         obj* tree = lisp_tree(initialcmd, i);
-        //cout << exprtrace(tree) << endl;
-        eval((obj*)tree);
+        tree = eval(tree);
         gc_collect();
     }
 }

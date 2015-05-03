@@ -28,22 +28,22 @@ struct obj {
         long long    ivalue;
         double       fvalue;
         obj*         ptr;
-    } data;
-    obj*             tail   = NULL;
+    } car;
+    obj*             cdr   = NULL;
     
     template <typename T> void set(T v) {
-        data.value = *reinterpret_cast<size_t*>(&v);
+        car.value = *reinterpret_cast<size_t*>(&v);
     }
     template <typename T> T get() {
-        return *reinterpret_cast<T*>(&data.value);
+        return *reinterpret_cast<T*>(&car.value);
     }
     template <typename T> void convert() {
-        data.value = static_cast<T>(data.value);
+        car.value = static_cast<T>(car.value);
     }
     void replace(obj* o) {
         type = o->type;
         trait = o->trait;
-        data.value = o->data.value;
+        car.value = o->car.value;
     }
 };
 
@@ -55,7 +55,7 @@ enum {
     T_LIST = 2,
 };
 
-const char* types[] = { 
+const char* types[] = {
     "NIL", 
     "ATOM", 
     "LIST", 
@@ -68,7 +68,7 @@ enum {
     TR_INT = 1,
     TR_FLOAT = 2, 
     TR_SYMBOL = 3, 
-    TR_STRING = 4,
+    TR_CHAR = 4,
     TR_LAMBDA = 5,
 };
 const char* traits[] = {
@@ -80,11 +80,17 @@ const char* traits[] = {
     "LAMBDA",
 };
 
+// Symbol cache
+std::map<obj*, string> symcache;
+
 void objdump(const obj* o, int line = 0, const char* label = "()") {
     cout << "Object at " << line << ":" << label << endl;
     cout << "* address: " << o << endl;
     cout << "\t  type: " << types[o->type] << endl;
     cout << "\t trait: " << traits[o->trait] << endl;
-    cout << "\t value: " << o->data.ptr << endl;
-    cout << "\t  tail: " << o->tail << endl;
+    if (symcache[o->car.ptr].length())
+        cout << "\t   car: " << symcache[o->car.ptr] << endl;
+    else
+        cout << "\t   car: " << o->car.ptr << endl;
+    cout << "\t   cdr: " << o->cdr << endl;
 }

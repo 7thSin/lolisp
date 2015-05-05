@@ -37,12 +37,13 @@ obj* sum(obj* ptr) {
 // Read above
 obj* sub(obj* ptr) {
     Num<std::minus<double>> res;
-    res.set(ptr);
+    res.set(ptr->car.ptr);
+    advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
-        switch (ptr->type) {
+        switch (it->type) {
             case T_ATOM:
-                res.apply(ptr);
+                res.apply(it);
         }
     }
     obj* result = new_obj(T_ATOM, res.trait);
@@ -54,9 +55,9 @@ obj* mult(obj* ptr) {
     res.value = 1.0;
     for iterate_elements(ptr, it) {
         it = eval(it);
-        switch (ptr->type) {
+        switch (it->type) {
             case T_ATOM:
-                res.apply(ptr);
+                res.apply(it);
         }
     }
     obj* result = new_obj(T_ATOM, res.trait);
@@ -65,12 +66,13 @@ obj* mult(obj* ptr) {
 }
 obj* div(obj* ptr) {
     Num<std::divides<double>> res;
-    res.set(ptr);
+    res.set(ptr->car.ptr);
+    advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
-        switch (ptr->type) {
+        switch (it->type) {
             case T_ATOM:
-                res.apply(ptr);
+                res.apply(it);
         }
     }
     obj* result = new_obj(T_ATOM, res.trait);

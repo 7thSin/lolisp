@@ -49,7 +49,7 @@ template <typename F, typename T> inline F recast(T& t) {
 }
 
 inline obj* cons(obj* head, obj* cdr) {
-    obj* cell;
+    obj* cell = nullptr;
     cell->car.ptr = head;
     cell->cdr = cdr;
     return cell;

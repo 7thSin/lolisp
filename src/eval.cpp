@@ -21,12 +21,7 @@
 // Function pointer
 typedef obj*(*fptr)(obj*);
 
-obj* eval(obj* ptr);
-
 #include "builtins/include.h"
-
-inline obj* call(obj* ptr);
-inline obj* call_lambda(obj* ptr, obj* args);
 
 obj* eval(obj* ptr) {
     switch (ptr->type) {

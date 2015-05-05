@@ -29,6 +29,7 @@
 #include <readline/history.h>
 #include <regex>
 #include <functional>
+#include <csignal>
 
 using std::stringstream;
 using std::fstream;
@@ -39,13 +40,19 @@ using std::cout;
 using std::endl;
 using std::map;
 
+bool interactive = true;
+
+#include "proto.cpp"
 #include "hash.cpp"
 #include "object/include.h"
 #include "print.cpp"
 #include "parser/lisp_tree.cpp"
+#include "debugger.cpp"
+#include "signal.cpp"
 #include "eval.cpp"
 
 int main() {
+    signals::init();
     const char* prompt = "λ) ";
     while (true) {
         char* cmdline = readline(prompt);

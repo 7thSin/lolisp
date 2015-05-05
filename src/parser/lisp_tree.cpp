@@ -49,6 +49,8 @@ obj* lisp_tree(const string& src, size_t& i) {
             case ')':
                 add_atom(ptr, token);
                 return base;
+            case ';':
+                for (; i < len && i != '\n'; i++);
             case '\n':
             case '\t':
             case ' ':

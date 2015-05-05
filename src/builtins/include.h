@@ -36,6 +36,7 @@ map<size_t, fptr> builtins = {
     { crc64("*"), builtin::mult },
     { crc64("/"), builtin::div },
     { crc64("shell"), builtin::shell },
+    { crc64("lambda"), builtin::lambda },
     { crc64("exit"), builtin::exit },
     { crc64("eval"), builtin::evalc },
     { crc64("objdump"), builtin::objdump },

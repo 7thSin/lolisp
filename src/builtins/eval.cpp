@@ -21,7 +21,7 @@
 obj* evalc(obj* ptr) {
     obj* o = new_obj();
     for iterate_list(ptr, it)
-        o = eval(it->car.ptr);
+        o = eval(eval(it->car.ptr));
     return o;
 }
 

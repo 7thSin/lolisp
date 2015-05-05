@@ -48,9 +48,6 @@ template <typename F, typename T> inline F recast(T& t) {
     return *reinterpret_cast<F*>(&t);
 }
 
-inline obj* cons(obj* head, obj* cdr) {
-    obj* cell;
-    cell->car.ptr = head;
-    cell->cdr = cdr;
-    return cell;
+inline obj* cons(obj* head, obj* tail) {
+    return new_obj(head, tail);
 }

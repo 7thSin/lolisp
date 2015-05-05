@@ -31,6 +31,11 @@ struct obj {
     } car;
     obj*             cdr   = NULL;
     
+    obj() {}
+    obj(obj* head, obj* tail) {
+        car.ptr = head;
+        cdr = tail;
+    };
     template <typename T> void set(T v) {
         car.value = *reinterpret_cast<size_t*>(&v);
     }

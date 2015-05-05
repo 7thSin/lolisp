@@ -36,14 +36,11 @@ obj* eval(obj* ptr) {
                     auto val_it = defines.find(ptr->car.value);
                     if (val_it != defines.end())
                         return val_it->second;
-                    else
-                        return ptr;
-                    break;
+                    return ptr;
                 }
                 default:
                     return ptr;
             }
-            break;
         case T_LIST:
             return call(ptr);
     }
@@ -90,7 +87,6 @@ inline obj* call_lambda(obj* ptr, obj* args) {
     }
     advance(ptr);
     for iterate_elements(ptr, it) {
-        cout << exprtrace(it) << endl;
         ret = eval(it);
     }
     for (auto const& it : local)

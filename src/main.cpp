@@ -29,6 +29,8 @@
 #include <readline/history.h>
 #include <regex>
 #include <functional>
+#include <fcntl.h>
+#include <unistd.h>
 
 using std::stringstream;
 using std::fstream;

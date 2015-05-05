@@ -1,5 +1,5 @@
 /*
-* close.cpp
+* open.cpp
 * This file is part of lolisp
 *
 * Copyright (C) 2015 - Rei <https://github.com/sovietspaceship>
@@ -22,15 +22,13 @@
   AUTHOR: https://github.com/serialexperiments <lain@lain.org.uk>
 */
 
-obj* read(obj* ptr) {
-	ptr = eval(ptr->car.ptr);
-	int fd = ptr->car.value;
+// open a gap in gensokyo
+obj* open(obj* ptr) {
+	obj* fd = new_obj(T_ATOM, TR_UINT);
+	string filename = make_stdstring(ptr->car.ptr);
 	advance(ptr);
 	ptr = eval(ptr->car.ptr);
-	size_t count = ptr->car.value;
-	std::string data = "";
-	data.reserve(count);
-	::read(fd, &data[0], count);
-	size_t i = 0;
-	return ::add_string(data, i);
+	fd->car.value = ::open(filename.c_str(), ptr->car.value);
+	
+	return fd;
 }

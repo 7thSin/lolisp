@@ -22,15 +22,13 @@
   AUTHOR: https://github.com/serialexperiments <lain@lain.org.uk>
 */
 
-obj* read(obj* ptr) {
+// Close the world. txEn eht nepO
+obj* close(obj* ptr) {
+	obj* status = new_obj(T_ATOM, TR_INT);
 	ptr = eval(ptr->car.ptr);
 	int fd = ptr->car.value;
-	advance(ptr);
-	ptr = eval(ptr->car.ptr);
-	size_t count = ptr->car.value;
-	std::string data = "";
-	data.reserve(count);
-	::read(fd, &data[0], count);
-	size_t i = 0;
-	return ::add_string(data, i);
+
+	status->car.value = ::close(fd);
+	
+	return status;
 }

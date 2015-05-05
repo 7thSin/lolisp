@@ -23,14 +23,14 @@
 */
 
 obj* read(obj* ptr) {
-	ptr = eval(ptr->car.ptr);
-	int fd = ptr->car.value;
+	obj* a1 = eval(ptr->car.ptr);
+	int fd = a1->car.value;
 	advance(ptr);
-	ptr = eval(ptr->car.ptr);
-	size_t count = ptr->car.value;
-	std::string data = "";
-	data.reserve(count);
-	::read(fd, &data[0], count);
+	obj* a2 = eval(ptr->car.ptr);
+	size_t count = a2->car.value;
+	std::string sbuf;
+	sbuf.resize(count);
+	::read(fd, &sbuf[0], count);
 	size_t i = 0;
-	return ::add_string(data, i);
+	return ::addstring(sbuf, i);
 }

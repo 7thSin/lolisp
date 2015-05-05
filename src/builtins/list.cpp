@@ -32,14 +32,8 @@ obj* cdr(obj* v) {
     return arg->cdr;
 }
 
-obj* cons(obj* v) {
-    obj* arg = eval(v->car.ptr);
-    advance(v);
-    obj* arg2 = eval(v->car.ptr);
-    obj* cell = new_list();
-    cell->car.ptr = arg;
-    cell->cdr = arg2;
-    return cell;
+obj* cons(obj* head, obj* tail) {
+    return new_obj(head, tail);
 }
 
 obj* list(obj* v) {

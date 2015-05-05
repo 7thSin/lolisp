@@ -20,8 +20,8 @@
 
 obj* car(obj* v) {
     obj* arg = eval(v->car.ptr);
-    if (arg->type != T_LIST)
-        return new_obj();
+    while (arg->type != T_LIST)
+        arg = debugger(DBG_REPLACE, "Invalid list.", arg);
     return arg->car.ptr;
 }
 

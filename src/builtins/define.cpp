@@ -32,7 +32,6 @@ obj* defun(obj* ptr) {
     advance(ptr);
     ptr->trait = TR_LAMBDA;
     defines[name] = ptr;
-    defdump(NULL);
     return new_obj(T_ATOM);
 }
 obj* define(obj* ptr) {

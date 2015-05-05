@@ -31,6 +31,13 @@ inline obj* new_obj() {
     return o;
 }
 
+// Cons
+inline obj* new_obj(obj* head, obj* tail) {
+    obj* o = new obj(head, tail);
+    mempool[o] = true;
+    return o;
+}
+
 // Some sugar
 inline obj* new_obj(unsigned type, unsigned trait = 0) {
     obj* o = new_obj();

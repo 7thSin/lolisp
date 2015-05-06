@@ -67,4 +67,5 @@ map<size_t, fptr> builtins = {
     { crc64("map"), builtin::mapf },
     { crc64("cat"), builtin::cat },
     { crc64("getenv"), builtin::getenv },
+    { crc64("mod"), builtin::mod },
 };

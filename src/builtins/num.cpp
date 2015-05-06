@@ -79,3 +79,16 @@ obj* div(obj* ptr) {
     result->car.value = res.get();
     return result;
 }
+
+obj* mod(obj* ptr) {
+    obj* arg1 = eval(ptr->car.ptr);
+    advance(ptr);
+    obj* arg2 = eval(ptr->car.ptr);
+    while (arg1->trait > TR_INT)
+        arg1 = debugger(DBG_REPLACE, "Invalid dividend for (mod).", arg1);
+    while (arg2->trait > TR_INT)
+        arg2 = debugger(DBG_REPLACE, "Invalid divisor for (mod).", arg2);
+    obj* ret = new_obj(T_ATOM, TR_INT);
+    ret->car.value = arg1->car.value % arg2->car.value;
+    return ret;
+}

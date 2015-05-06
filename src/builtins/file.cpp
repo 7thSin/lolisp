@@ -1,5 +1,5 @@
 /*
-* close.cpp
+* list.cpp
 * This file is part of lolisp
 *
 * Copyright (C) 2015 - Rei <https://github.com/sovietspaceship>
@@ -18,10 +18,22 @@
 * along with lolisp. If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
-  AUTHOR: https://github.com/serialexperiments <lain@lain.org.uk>
-*/
-obj* read(obj* ptr) {
+// Contributed by: 
+// https://github.com/serialexperiments <lain@lain.org.uk>
+// open a gap in gensokyo
+obj* file_open(obj* ptr) {
+	obj* fd = new_obj(T_ATOM, TR_UINT);
+	string filename = make_stdstring(ptr->car.ptr);
+	advance(ptr);
+	ptr = eval(ptr->car.ptr);
+	fd->car.value = ::open(filename.c_str(), ptr->car.value);
+	
+	return fd;
+}
+
+// Contributed by:
+// https://github.com/serialexperiments <lain@lain.org.uk>
+obj* file_read(obj* ptr) {
 	obj* a1 = eval(ptr->car.ptr);
 	int fd = a1->car.value;
 	advance(ptr);
@@ -32,4 +44,17 @@ obj* read(obj* ptr) {
 	ssize_t stfu = ::read(fd, &sbuf[0], count);
 	size_t i = 0;
 	return ::addstring(sbuf, i);
+}
+
+// Contributed by: 
+// https://github.com/serialexperiments <lain@lain.org.uk>
+// Close the world. txEn eht nepO
+obj* file_close(obj* ptr) {
+	obj* status = new_obj(T_ATOM, TR_INT);
+	ptr = eval(ptr->car.ptr);
+	int fd = ptr->car.value;
+
+	status->car.value = ::close(fd);
+	
+	return status;
 }

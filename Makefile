@@ -1,6 +1,6 @@
 # Makefile for lolisp
 OUTPUT = lolisp
-CC=c++
+CC = c++
 VERFLAGS = -std=c++1y
 CCFLAGS = -O2
 WARNING = -Wall -Wno-strict-aliasing

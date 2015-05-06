@@ -26,9 +26,7 @@ namespace builtin {
 #include "system.cpp"
 #include "num.cpp"
 #include "misc.cpp"
-#include "open.cpp"
-#include "close.cpp"
-#include "read.cpp"
+#include "file.cpp"
 }
 
 // Collisions are improbable, but may happen.
@@ -56,8 +54,9 @@ map<size_t, fptr> builtins = {
     { crc64("crc"), builtin::crc },
     { crc64("print"), builtin::print },
     { crc64("list"), builtin::list },
-    { crc64("open"), builtin::open },
-	{ crc64("close"), builtin::close },
+    { crc64("file-open"), builtin::file_open },
+	{ crc64("file-close"), builtin::file_close },
+    { crc64("file-read"), builtin::file_read },
     { crc64("read"), builtin::read },
     { crc64("set-signal"), builtin::set_signal },
     { crc64("set-trait"), builtin::set_trait },

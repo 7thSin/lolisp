@@ -66,5 +66,12 @@ obj* load(obj* ptr) {
     for iterate_elements(data, it) {
         ret = ::eval(it);
     }
-    return new_t();
+    return ret;
+}
+
+obj* read(obj* ptr) {
+    size_t i = 0;
+    string src;
+    std::getline(std::cin, src, '\n');
+    return lisp_tree(src, i);
 }

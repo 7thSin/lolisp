@@ -52,10 +52,19 @@ obj* compile_file(obj* ptr) {
         obj* result = ::lisp_tree(src, i);
         if (result->type != T_NIL) {
             o->car.ptr = result;
-            o->cdr = new_obj();
+            o->cdr = new_list();
             advance(o);
         }
     }
     cout << "done." << endl;
     return base;
+}
+
+obj* load(obj* ptr) {
+    obj* data = compile_file(ptr);
+    obj* ret = NULL;
+    for iterate_elements(data, it) {
+        ret = ::eval(it);
+    }
+    return new_t();
 }

@@ -34,6 +34,8 @@ inline obj* new_obj() {
 // Cons
 inline obj* new_obj(obj* head, obj* tail) {
     obj* o = new obj(head, tail);
+    o->type = T_LIST;
+    o->trait = head->trait;
     mempool[o] = true;
     return o;
 }
@@ -43,6 +45,14 @@ inline obj* new_obj(unsigned type, unsigned trait = 0) {
     obj* o = new_obj();
     o->type = type;
     o->trait = trait;
+    return o;
+}
+
+inline obj* new_t() {
+    obj* o = new_obj();
+    o->type = T_NIL;
+    o->trait = TR_UINT;
+    o->car.value = 1;
     return o;
 }
 

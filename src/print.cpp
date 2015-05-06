@@ -68,7 +68,10 @@ string print(obj* base) {
                 out += "NIL";
             break;
         case T_NIL:
-            out += "NIL";
+            if (ptr->car.value)
+                out += "T";
+            else
+                out += "NIL";
             break;
         default:
             out += "?";
@@ -122,7 +125,10 @@ string exprtrace(obj* base) {
                 out += "NIL";
             break;
         case T_NIL:
-            out += "NIL";
+            if (ptr->car.value)
+                out += "T";
+            else
+                out += "NIL";
             break;
         default:
             out += "?";

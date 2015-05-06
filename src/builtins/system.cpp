@@ -34,3 +34,10 @@ obj* shell(obj* ptr) {
     lolwut->car.value = a;
     return lolwut;
 }
+
+obj* set_signal(obj* ptr) {
+    size_t sig = eval(ptr->car.ptr->car.ptr)->car.value;
+    advance(ptr);
+    ::signals::set(sig, eval(ptr->car.ptr));
+    return new_t();
+}

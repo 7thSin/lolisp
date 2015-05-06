@@ -32,8 +32,14 @@ obj* cdr(obj* v) {
     return arg->cdr;
 }
 
-obj* cons(obj* head, obj* tail) {
-    return new_obj(head, tail);
+obj* cons(obj* v) {
+    obj* arg = eval(v->car.ptr);
+    advance(v);
+    obj* arg2 = eval(v->car.ptr);
+    obj* cell = new_list();
+    cell->car.ptr = arg;
+    cell->cdr = arg2;
+    return cell;
 }
 
 obj* list(obj* v) {
@@ -69,4 +75,21 @@ obj* objdump(obj* ptr) {
     obj* eptr = eval(ptr->car.ptr);
     objdump(eptr, 0, "from REPL");
     return eptr;
+}
+
+obj* funcall(obj* ptr) {
+    return ::call(ptr);
+}
+
+obj* apply(obj* ptr) {
+    obj* nil = new_obj();
+    obj* fn = cons(ptr->car.ptr, nil);
+    obj* args = ptr->cdr;
+    obj* ret = NULL;
+    for iterate_list(args->car.ptr, it) {
+        obj* farg = cons(it->car.ptr, nil);
+        obj* fcall = new_obj(fn->car.ptr, farg);
+        ret = funcall(fcall);
+    }
+    return ret;
 }

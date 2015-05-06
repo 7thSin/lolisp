@@ -24,7 +24,7 @@ obj* defdump(obj* ptr) {
         objdump(it.second, it.first, "defdump");
         cout << exprtrace(it.second) << endl;
     }
-    return new_obj();
+    return new_t();
 }
 
 obj* defun(obj* ptr) {
@@ -32,13 +32,13 @@ obj* defun(obj* ptr) {
     advance(ptr);
     ptr->trait = TR_LAMBDA;
     defines[name] = ptr;
-    return new_obj(T_ATOM);
+    return new_t();
 }
 obj* define(obj* ptr) {
     size_t name = ptr->car.ptr->car.value;
     ptr = eval(ptr->cdr->car.ptr);
     defines[name] = ptr;
-    return new_obj(T_ATOM);
+    return new_t();
 }
 obj* lambda(obj* ptr) {
     if (ptr->type != T_LIST)

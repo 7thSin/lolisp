@@ -21,7 +21,6 @@
 /*
   AUTHOR: https://github.com/serialexperiments <lain@lain.org.uk>
 */
-
 obj* read(obj* ptr) {
 	obj* a1 = eval(ptr->car.ptr);
 	int fd = a1->car.value;
@@ -30,7 +29,7 @@ obj* read(obj* ptr) {
 	size_t count = a2->car.value;
 	std::string sbuf;
 	sbuf.resize(count);
-	::read(fd, &sbuf[0], count);
+	ssize_t stfu = ::read(fd, &sbuf[0], count);
 	size_t i = 0;
 	return ::addstring(sbuf, i);
 }

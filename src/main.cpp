@@ -54,15 +54,19 @@ bool interactive = true;
 #include "eval.cpp"
 
 int main() {
+    string initexpr = "(load \"src/lisp/stdlib.loli\")";
+    size_t k = 0;
+    eval(lisp_tree(initexpr, k));
+    initexpr.clear();
     signals::init();
     const char* prompt = "λ) ";
     while (true) {
         char* cmdline = readline(prompt);
         add_history(cmdline);
         size_t i = 0;
-        string initialcmd = "(print " + string(cmdline) + ")";
+        string cmd = "(print " + string(cmdline) + ")";
         free(cmdline);
-        obj* tree = lisp_tree(initialcmd, i);
+        obj* tree = lisp_tree(cmd, i);
         tree = eval(tree);
         gc_collect();
     }

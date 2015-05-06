@@ -34,8 +34,17 @@ obj* format(obj* ptr) {
     obj* arg = ptr->cdr;
     bool control = false;
     for iterate_elements(fmt, it) {
-        obj* val = eval(arg->car.ptr);
         if (control) {
+            control = false;
+            switch (it->car.value) {
+                case '%':
+                    cout << endl;
+                    continue;
+                case 't':
+                    cout << '\t';
+                    continue;
+            }
+            obj* val = eval(arg->car.ptr);
             switch (it->car.value) {
                 case 'd':
                     cout << val->get<long long>();
@@ -67,7 +76,6 @@ obj* format(obj* ptr) {
                 default:
                     cout << (char)fmt->car.value;
             }
-            control = false;
         }
         else if (it->car.value == '~')
             control = true;

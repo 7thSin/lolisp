@@ -58,10 +58,13 @@ map<size_t, fptr> builtins = {
 	{ crc64("file-close"), builtin::file_close },
     { crc64("file-read"), builtin::file_read },
     { crc64("read"), builtin::read },
+    { crc64("readline"), builtin::readlinef },
     { crc64("set-signal"), builtin::set_signal },
     { crc64("set-trait"), builtin::set_trait },
     { crc64("funcall"), builtin::funcall },
     { crc64("apply"), builtin::apply },
     { crc64("load"), builtin::load },
     { crc64("map"), builtin::mapf },
+    { crc64("cat"), builtin::cat },
+    { crc64("getenv"), builtin::getenv },
 };

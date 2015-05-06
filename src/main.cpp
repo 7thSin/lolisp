@@ -43,6 +43,13 @@ using std::endl;
 using std::map;
 
 bool interactive = true;
+string initexpr = "(load \"src/lisp/stdlib.loli\")";
+string initrc = "(cat (getenv \"HOME\") \"/.lolisprc.loli\")";
+
+void die(const char* m) {
+    std::cerr << m << endl;
+    exit(1);
+}
 
 #include "proto.cpp"
 #include "hash.cpp"
@@ -52,22 +59,31 @@ bool interactive = true;
 #include "debugger.cpp"
 #include "signal.cpp"
 #include "eval.cpp"
+#include "opts.cpp"
 
-int main() {
-    string initexpr = "(load \"src/lisp/stdlib.loli\")";
-    size_t k = 0;
-    eval(lisp_tree(initexpr, k));
-    initexpr.clear();
+int main(int argc, char* argv[]) {
+    parse_opts(argc, argv);
     signals::init();
-    const char* prompt = "λ) ";
-    while (true) {
-        char* cmdline = readline(prompt);
-        add_history(cmdline);
-        size_t i = 0;
-        string cmd = "(print " + string(cmdline) + ")";
-        free(cmdline);
-        obj* tree = lisp_tree(cmd, i);
-        tree = eval(tree);
-        gc_collect();
+    obj* initobj = lisp_tree(initexpr);
+    for iterate_list(initobj, it)
+        eval(it->car.ptr);
+    initrc = "(load " + initrc + ")";
+    initobj = lisp_tree(initrc);
+    for iterate_list(initobj, it)
+        eval(it->car.ptr);
+    initrc.clear();
+    initexpr.clear();
+    gc_collect();
+    if (interactive) {
+        const char* prompt = "λ) ";
+        while (true) {
+            char* cmdline = readline(prompt);
+            add_history(cmdline);
+            string cmd = "(print " + string(cmdline) + ")";
+            free(cmdline);
+            obj* tree = lisp_tree(cmd);
+            eval(tree->car.ptr);
+            gc_collect();
+        }
     }
 }

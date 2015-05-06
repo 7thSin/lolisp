@@ -28,15 +28,12 @@ obj* lisp_tree(const string& src, size_t& i) {
     obj* base = new_list();
     obj* ptr = base;
     
-    // Get to the beginning of the s-expression
-    for (; src[i] != '(' && i < len; i++);
-    
     // Loop starting after (
-    for (i++; i < len; i++) {
+    for (; i < len; i++) {
         switch (src[i]) {
             case '(':
                 token.clear();
-                ptr->car.ptr = lisp_tree(src, i);
+                ptr->car.ptr = lisp_tree(src, ++i);
                 ptr->cdr = new_list();
                 advance(ptr);
                 break;
@@ -61,5 +58,11 @@ obj* lisp_tree(const string& src, size_t& i) {
                 token += src[i];
         }
     }
+    add_atom(ptr, token);
     return base;
+}
+
+inline obj* lisp_tree(const string& src) {
+    size_t i = 0;
+    return lisp_tree(src, i);
 }

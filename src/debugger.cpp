@@ -42,7 +42,7 @@ obj* debugger(unsigned options = DBG_TERM, const char* message = NULL, obj* crim
     size_t i = 0;
     string initialcmd = "(print " + string(cmdline) + ")";
     free(cmdline);
-    obj* tree = lisp_tree(initialcmd, i);
+    obj* tree = lisp_tree(initialcmd, i)->car.ptr;
     rl_on_new_line();
     return eval(tree);
 }

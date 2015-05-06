@@ -81,7 +81,7 @@ const char* traits[] = {
     "INT",
     "FLOAT", 
     "SYMBOL", 
-    "STRING", 
+    "CHAR", 
     "LAMBDA",
 };
 

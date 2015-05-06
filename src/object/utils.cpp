@@ -34,8 +34,22 @@ inline void descend(obj*& ptr) {
 #define iterate_list(ptr, it) \
     (obj* it = ptr; it->cdr; advance(it))
     
-#define iterate_list_nil(ptr, it) \
-    (obj* it = ptr; it; advance(it))
+inline obj* list_end(obj* ptr) {
+    for (; ptr->cdr->cdr; advance(ptr));
+    return ptr;
+}
+
+inline obj* copy_list(obj* ptr) {
+    obj* cp = new_list();
+    obj* ret = cp;
+    for iterate_elements(ptr, it) {
+        cp->car.ptr = it;
+        cp->trait = ptr->trait;
+        cp->cdr = new_list();
+        advance(cp);
+    }
+    return ret;
+}
 
 inline string make_stdstring(obj* ptr) {
     string str;

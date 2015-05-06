@@ -60,6 +60,7 @@ map<size_t, fptr> builtins = {
 	{ crc64("close"), builtin::close },
     { crc64("read"), builtin::read },
     { crc64("set-signal"), builtin::set_signal },
+    { crc64("set-trait"), builtin::set_trait },
     { crc64("funcall"), builtin::funcall },
     { crc64("apply"), builtin::apply },
     { crc64("load"), builtin::load },

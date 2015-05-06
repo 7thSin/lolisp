@@ -65,9 +65,12 @@ obj* quote(obj* ptr) {
 }
 
 obj* set_trait(obj* ptr) {
-    obj* trait = ptr;
+    obj* trait = eval(ptr->car.ptr);
     advance(ptr);
-    ptr->car.ptr->trait = trait->car.ptr->car.value;
+    ptr = eval(ptr->car.ptr);
+    ptr->car.ptr->trait = trait->car.value;
+    for iterate_elements(ptr, it)
+        it->trait = trait->car.value;
     return ptr;
 }
 

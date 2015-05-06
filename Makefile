@@ -8,19 +8,22 @@ LDFLAGS = -lreadline
 DGFLAGS = -g -O0
 
 all:
-	mkdir -p bin
+	@mkdir -p bin
 	@echo "* Building lolisp..."
 	$(CC) $(VERFLAGS) $(CCFLAGS) src/main.cpp -o bin/$(OUTPUT) $(LDFLAGS) $(WARNING)
 
 debug:
-	mkdir -p bin
+	@mkdir -p bin
 	$(CC) $(VERFLAGS) $(DGFLAGS) src/main.cpp -o bin/$(OUTPUT)-debug $(LDFLAGS) $(WARNING)
 
 clean: 
-	rm -vr bin
+	@rm -vr bin
 
 run:
 	bin/$(OUTPUT)
 
 valgrind:
 	valgrind bin/$(OUTPUT)-debug
+	
+fun:
+	@echo lol

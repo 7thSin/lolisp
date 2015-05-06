@@ -36,7 +36,7 @@ obj* shell(obj* ptr) {
 }
 
 obj* set_signal(obj* ptr) {
-    size_t sig = eval(ptr->car.ptr->car.ptr)->car.value;
+    size_t sig = eval(ptr->car.ptr)->car.value;
     advance(ptr);
     ::signals::set(sig, eval(ptr->car.ptr));
     return new_t();

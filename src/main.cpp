@@ -64,6 +64,7 @@ void die(const char* m) {
 int main(int argc, char* argv[]) {
     parse_opts(argc, argv);
     signals::init();
+    add_define("*interactive*", T_NIL, TR_UINT, interactive);
     obj* initobj = lisp_tree(initexpr);
     for iterate_list(initobj, it)
         eval(it->car.ptr);
@@ -77,10 +78,14 @@ int main(int argc, char* argv[]) {
     if (interactive) {
         const char* prompt = "λ) ";
         while (true) {
-            char* cmdline = readline(prompt);
-            add_history(cmdline);
+            char* line = readline(prompt);
+            if (!line)
+                break;
+            string cmdline = line;
+            if (!cmdline.length()) continue;
+            add_history(cmdline.c_str());
+            free(line);
             string cmd = "(print " + string(cmdline) + ")";
-            free(cmdline);
             obj* tree = lisp_tree(cmd);
             eval(tree->car.ptr);
             gc_collect();

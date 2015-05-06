@@ -59,3 +59,9 @@ inline obj* new_t() {
 inline obj* new_list() {
     return new_obj(T_LIST);
 }
+
+void add_define(const string name, unsigned type, unsigned trait, size_t value) {
+    obj* d = new_obj(type, trait);
+    d->car.value = value;
+    defines.insert({ crc64(name), d });
+}

@@ -96,3 +96,19 @@ obj* apply(obj* ptr) {
     }
     return ret;
 }
+
+obj* mapf(obj* ptr) {
+    obj* nil = new_obj();
+    obj* fn = cons(ptr->car.ptr, nil);
+    obj* args = ptr->cdr;
+    obj* ret = new_list();
+    obj* base = ret;
+    for iterate_elements(args, it) {
+        obj* farg = cons(it, nil);
+        obj* fcall = new_obj(fn->car.ptr, farg);
+        ret->car.ptr = funcall(fcall);
+        ret->cdr = new_list();
+        advance(ret);
+    }
+    return base;
+}

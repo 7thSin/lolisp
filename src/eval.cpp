@@ -76,7 +76,7 @@ inline obj* call_lambda(obj* ptr, obj* args) {
     scope = scope->car.ptr;
     for iterate_elements(scope, it) {
         size_t symb = it->car.value;
-        defines[symb] = args->car.ptr;
+        defines[symb] = eval(args->car.ptr);
         local.push_back(symb);
         advance(args);
     }

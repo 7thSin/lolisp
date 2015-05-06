@@ -63,4 +63,5 @@ map<size_t, fptr> builtins = {
     { crc64("funcall"), builtin::funcall },
     { crc64("apply"), builtin::apply },
     { crc64("load"), builtin::load },
+    { crc64("map"), builtin::mapf },
 };

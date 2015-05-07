@@ -68,4 +68,10 @@ map<size_t, fptr> builtins = {
     { new_symbol("cat"), builtin::cat },
     { new_symbol("getenv"), builtin::getenv },
     { new_symbol("mod"), builtin::mod },
+    { new_symbol("or"), builtin::bit_or },
+    { new_symbol("and"), builtin::bit_and },
+    { new_symbol("xor"), builtin::bit_xor },
+    { new_symbol("lshift"), builtin::bit_lshift },
+    { new_symbol("rshift"), builtin::bit_rshift },
+    { new_symbol("not"), builtin::bit_not },
 };

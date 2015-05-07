@@ -57,6 +57,7 @@ map<size_t, fptr> builtins = {
     { new_symbol("file-open"), builtin::file_open },
     { new_symbol("file-close"), builtin::file_close },
     { new_symbol("file-read"), builtin::file_read },
+    { new_symbol("file-write"), builtin::file_write },
     { new_symbol("read"), builtin::read },
     { new_symbol("readline"), builtin::readlinef },
     { new_symbol("set-signal"), builtin::set_signal },

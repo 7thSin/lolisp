@@ -66,6 +66,27 @@ obj* read(obj* ptr) {
     return lisp_tree(src)->car.ptr;
 }
 
+obj* if_b(obj* ptr) {
+    if (!ptr->car.ptr->car.value)
+        return new_obj();
+    advance(ptr);
+    obj* o = new_obj();
+    for iterate_list(ptr, it)
+        o = eval(eval(it->car.ptr));
+    return o;
+}
+
+obj* while_b(obj* ptr) {
+    obj* o = new_obj();
+    obj* start = ptr;
+    while (ptr->car.ptr->car.value) {
+        for iterate_list(ptr, it)
+            o = eval(eval(it->car.ptr));
+        ptr = start;
+    }
+    return o;
+}
+
 obj* readlinef(obj* ptr) {
     obj* prompt = ptr->car.ptr;
     const char* promptstr = NULL;

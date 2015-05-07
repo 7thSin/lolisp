@@ -61,7 +61,7 @@ obj* length(obj* ptr) {
 }
 
 obj* quote(obj* ptr) {
-    return ptr;
+    return ptr->car.ptr;
 }
 
 obj* set_trait(obj* ptr) {
@@ -129,9 +129,7 @@ obj* cat(obj* ptr) {
 }
 
 obj* gc_size(obj* ptr) {
-    gc_count size = ::gc_memsize();
-    cout << "Lisp memory: " << size.mem/1000.0 << " kB" << endl;
-    cout << "Lisp objects: " << size.num << endl;
-    cout << "Object size: " << sizeof(obj) << endl;
+    cout << "Lisp memory: " << mempool.size()*sizeof(obj)/1000.0 << " kB" << endl;
+    cout << "Lisp objects: " << mempool.size() << endl;
     return ptr;
 }

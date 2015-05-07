@@ -20,6 +20,7 @@
 
 obj* defdump(obj* ptr) {
     for (auto const& it : defines) {
+        if (!it.second) continue;
         cout << symcache[(obj*)it.first] << endl;
         objdump(it.second, it.first, "defdump");
         cout << exprtrace(it.second) << endl;
@@ -31,7 +32,7 @@ obj* defun(obj* ptr) {
     size_t name = ptr->car.ptr->car.value;
     advance(ptr);
     ptr->trait = TR_LAMBDA;
-    defines.insert({name, ptr});
+    defines.insert({ name, ptr });
     return new_t();
 }
 obj* define(obj* ptr) {
@@ -45,4 +46,11 @@ obj* lambda(obj* ptr) {
         return new_obj();
     ptr->trait = TR_LAMBDA;
     return ptr;
+}
+obj* defmacro(obj* ptr) {
+    size_t name = ptr->car.ptr->car.value;
+    advance(ptr);
+    ptr->trait = TR_LAMBDA;
+    macros.insert({ name, ptr });
+    return new_t();
 }

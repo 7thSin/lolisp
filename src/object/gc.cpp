@@ -21,11 +21,13 @@
 // Mark and sweep garbage collection
 
 void gc_sweep() {
-    for (auto const& it : mempool) {
-        if (it.second)
-            delete it.first;
+    for (auto it = mempool.cbegin(); it != mempool.cend();) {
+        if (it->second) {
+            delete it->first;
+            mempool.erase(it++);
+        }
+        else ++it;
     }
-    mempool.clear();
 }
 
 void gc_mark(obj* ptr) {
@@ -40,40 +42,9 @@ void gc_mark(obj* ptr) {
 }
 
 void gc_collect() {
-    for (auto const& it : defines) {
+    for (auto const& it : defines)
         gc_mark(it.second);
-    }
+    for (auto const& it : macros)
+        gc_mark(it.second);
     gc_sweep();
-}
-
-struct gc_count {
-    size_t mem = 0;
-    size_t num = 0;
-};
-
-gc_count gc_getsize(obj* ptr) {
-    gc_count size;
-    for (; ptr; ptr = ptr->cdr) {
-        switch (ptr->type) {
-            case T_LIST: {
-                gc_count ls = gc_getsize(ptr->car.ptr);
-                size.mem += ls.mem;
-                size.num += ls.num;
-            }
-            default:
-                size.mem += sizeof(obj);
-                size.num++;
-        }
-    }
-    return size;
-}
-
-gc_count gc_memsize() {
-    gc_count size;
-    for (auto const& it : defines) {
-        gc_count ls = gc_getsize(it.second);
-        size.mem += ls.mem;
-        size.num += ls.num;
-    }
-    return size;
 }

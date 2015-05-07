@@ -47,6 +47,6 @@ obj* debugger(unsigned options = DBG_TERM, const char* message = NULL, obj* crim
     string initialcmd = "(eval " + cmdline + ")";
     obj* tree = lisp_tree(initialcmd, i)->car.ptr;
     rl_on_new_line();
-    rl_reset_line_state(); 
+    rl_reset_line_state();
     return eval(tree);
 }

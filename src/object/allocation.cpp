@@ -21,6 +21,9 @@
 // Our global scope
 map<size_t, obj*> defines;
 
+// Macros
+map<size_t, obj*> macros;
+
 // Allocated memory map
 std::map<obj*, bool> mempool;
 

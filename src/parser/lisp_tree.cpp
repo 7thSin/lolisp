@@ -19,6 +19,7 @@
 */
 
 #include "addobj.cpp"
+#include "macro.cpp"
 
 // Reads a string and generates a s-expr tree
 obj* lisp_tree(const string& src, size_t& i) {
@@ -37,6 +38,14 @@ obj* lisp_tree(const string& src, size_t& i) {
                 ptr->cdr = new_list();
                 advance(ptr);
                 break;
+            case '\'': {
+                token.clear();
+                obj* quot = new_obj(T_ATOM, TR_SYMBOL);
+                quot->car.value = crc64("quote");
+                ptr->car.ptr = quot;
+                ptr->cdr = lisp_tree(src, ++i);
+                return base;
+            }
             case '"':
                 ptr->car.ptr = addstring(src, ++i);
                 ptr->cdr = new_list();
@@ -45,6 +54,7 @@ obj* lisp_tree(const string& src, size_t& i) {
                 break;
             case ')':
                 add_atom(ptr, token);
+                base = macro_apply(base);
                 return base;
             case ';':
                 for (; i < len && src[i] != '\n'; i++);

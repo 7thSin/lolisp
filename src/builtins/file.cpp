@@ -22,13 +22,25 @@
 // https://github.com/serialexperiments <lain@lain.org.uk>
 // open a gap in gensokyo
 obj* file_open(obj* ptr) {
-	obj* fd = new_obj(T_ATOM, TR_UINT);
+	obj* fd = new_obj(T_ATOM, TR_INT);
 	string filename = make_stdstring(ptr->car.ptr);
 	advance(ptr);
 	ptr = eval(ptr->car.ptr);
 	fd->car.value = ::open(filename.c_str(), ptr->car.value);
 	
 	return fd;
+}
+
+// Contributed by:
+// https://github.com/serialexperiments <lain@lain.org.uk>
+obj* file_write(obj* ptr) {
+	obj* nbytes = new_obj(T_ATOM, TR_INT);
+	obj* a1 = eval(ptr->car.ptr);
+	int fd = a1->car.value;
+	advance(ptr);
+	string data = make_stdstring(ptr->car.ptr);
+	nbytes->car.value = ::write(fd, data.data(), data.length());
+	return nbytes;
 }
 
 // Contributed by:

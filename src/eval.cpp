@@ -82,7 +82,6 @@ inline obj* call_lambda(obj* ptr, obj* args) {
     }
     advance(ptr);
     for iterate_elements(ptr, it) {
-        cout << exprtrace(it) << endl;
         ret = eval(it);
     }
     for (auto const& it : local)

@@ -60,6 +60,7 @@ void die(const char* m) {
 #include "signal.cpp"
 #include "eval.cpp"
 #include "opts.cpp"
+#include "readline.cpp"
 
 int main(int argc, char* argv[]) {
     parse_opts(argc, argv);
@@ -76,6 +77,8 @@ int main(int argc, char* argv[]) {
     initexpr.clear();
     gc_collect();
     if (interactive) {
+        rl_basic_word_break_characters = " \t\n\"";
+        rl_attempted_completion_function = autocomplete_functions;
         const char* prompt = "λ) ";
         while (true) {
             char* line = readline(prompt);

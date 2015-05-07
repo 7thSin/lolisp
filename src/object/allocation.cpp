@@ -65,3 +65,9 @@ void add_define(const string name, unsigned type, unsigned trait, size_t value) 
     d->car.value = value;
     defines.insert({ crc64(name), d });
 }
+
+size_t new_symbol(string token) {
+    obj* symb = (obj*)crc64(token);
+    symcache[symb] = token;
+    return (size_t)symb;
+}

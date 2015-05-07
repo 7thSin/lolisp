@@ -5,8 +5,8 @@ namespace signals {
         if (sigcall != sigcalls.end())
             eval(sigcall->second); // execute lambda
         else if (interactive) {
-            if (::debugger(DBG_TERM, "Signal received.")->car.value)  // enter debugger session
-                exit(2);
+            if (::debugger(DBG_TERM, "\nSignal received.")->car.value)  // enter debugger session
+                exit(0);
         }
         else {
             signal(s, SIG_DFL); // reset the signal handler

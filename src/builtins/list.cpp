@@ -112,3 +112,18 @@ obj* mapf(obj* ptr) {
     }
     return base;
 }
+
+obj* copy_list(obj* ptr) {
+    return ::copy_list(ptr->car.ptr);
+}
+
+obj* cat(obj* ptr) {
+    obj* ls = eval(ptr->car.ptr);
+    obj* ret = ls;
+    advance(ptr);
+    for iterate_list(ptr, it) {
+        ls = list_end(ls);
+        ls->cdr = ::copy_list(eval(it->car.ptr));
+    }
+    return ret;
+}

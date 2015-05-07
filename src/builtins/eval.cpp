@@ -26,10 +26,11 @@ obj* evalc(obj* ptr) {
 }
 
 obj* compile_file(obj* ptr) {
-    if (ptr->car.ptr->trait != TR_CHAR)
+    obj* fname = eval(ptr->car.ptr);
+    if (fname->trait != TR_CHAR)
         return new_obj();
 
-    string filename = make_stdstring(ptr->car.ptr);
+    string filename = make_stdstring(fname);
     stringstream reader;
     fstream fp;
     cout << "Loading " << filename << "... " << std::flush;
@@ -43,35 +44,33 @@ obj* compile_file(obj* ptr) {
     fp.close();
 
     string src = reader.str();
-    size_t i = 0;
-    obj* o = new_obj();
-    obj* base = o;
-    base->type = T_LIST;
     cout << "Compiling... " << std::flush;
-    while (i < src.length()) {
-        obj* result = ::lisp_tree(src, i);
-        if (result->type != T_NIL) {
-            o->car.ptr = result;
-            o->cdr = new_list();
-            advance(o);
-        }
-    }
+    obj* base = ::lisp_tree(src);
     cout << "done." << endl;
     return base;
 }
 
 obj* load(obj* ptr) {
     obj* data = compile_file(ptr);
+    if (data->type == T_NIL)
+        return data;
     obj* ret = NULL;
-    for iterate_elements(data, it) {
+    for iterate_elements(data, it)
         ret = ::eval(it);
-    }
     return ret;
 }
 
 obj* read(obj* ptr) {
-    size_t i = 0;
     string src;
     std::getline(std::cin, src, '\n');
-    return lisp_tree(src, i);
+    return lisp_tree(src)->car.ptr;
+}
+
+obj* readlinef(obj* ptr) {
+    obj* prompt = ptr->car.ptr;
+    const char* promptstr = NULL;
+    if (prompt && prompt->type == T_LIST)
+        promptstr = make_stdstring(prompt).c_str();
+    string src = ::readline(promptstr);
+    return lisp_tree(src)->car.ptr;
 }

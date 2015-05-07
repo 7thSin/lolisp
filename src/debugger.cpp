@@ -37,12 +37,16 @@ obj* debugger(unsigned options = DBG_TERM, const char* message = NULL, obj* crim
     }
     if (message)
         cout << message << endl;
-    char* cmdline = readline(prompt);
-    add_history(cmdline);
+    char* line = readline(prompt);
+    if (!line) return new_obj();
+    string cmdline = line;
+    free(line);
+    if (!cmdline.length())
+        add_history(cmdline.c_str());
     size_t i = 0;
-    string initialcmd = "(print " + string(cmdline) + ")";
-    free(cmdline);
-    obj* tree = lisp_tree(initialcmd, i);
+    string initialcmd = "(eval " + cmdline + ")";
+    obj* tree = lisp_tree(initialcmd, i)->car.ptr;
     rl_on_new_line();
+    rl_reset_line_state(); 
     return eval(tree);
 }

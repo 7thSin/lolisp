@@ -31,13 +31,13 @@ obj* defun(obj* ptr) {
     size_t name = ptr->car.ptr->car.value;
     advance(ptr);
     ptr->trait = TR_LAMBDA;
-    defines[name] = ptr;
+    defines.insert({name, ptr});
     return new_t();
 }
 obj* define(obj* ptr) {
     size_t name = ptr->car.ptr->car.value;
     ptr = eval(ptr->cdr->car.ptr);
-    defines[name] = ptr;
+    defines.insert({ name, ptr });
     return new_t();
 }
 obj* lambda(obj* ptr) {

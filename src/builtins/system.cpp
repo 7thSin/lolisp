@@ -41,3 +41,10 @@ obj* set_signal(obj* ptr) {
     ::signals::set(sig, eval(ptr->car.ptr));
     return new_t();
 }
+
+obj* getenv(obj* ptr) {
+    string str = make_stdstring(eval(ptr->car.ptr));
+    str = ::getenv(str.c_str());
+    size_t i = 0;
+    return ::addstring(str, i);
+}

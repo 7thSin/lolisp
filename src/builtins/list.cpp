@@ -127,3 +127,11 @@ obj* cat(obj* ptr) {
     }
     return ret;
 }
+
+obj* gc_size(obj* ptr) {
+    gc_count size = ::gc_memsize();
+    cout << "Lisp memory: " << size.mem/1000.0 << " kB" << endl;
+    cout << "Lisp objects: " << size.num << endl;
+    cout << "Object size: " << sizeof(obj) << endl;
+    return ptr;
+}

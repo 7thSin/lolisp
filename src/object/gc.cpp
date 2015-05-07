@@ -45,3 +45,35 @@ void gc_collect() {
     }
     gc_sweep();
 }
+
+struct gc_count {
+    size_t mem = 0;
+    size_t num = 0;
+};
+
+gc_count gc_getsize(obj* ptr) {
+    gc_count size;
+    for (; ptr; ptr = ptr->cdr) {
+        switch (ptr->type) {
+            case T_LIST: {
+                gc_count ls = gc_getsize(ptr->car.ptr);
+                size.mem += ls.mem;
+                size.num += ls.num;
+            }
+            default:
+                size.mem += sizeof(obj);
+                size.num++;
+        }
+    }
+    return size;
+}
+
+gc_count gc_memsize() {
+    gc_count size;
+    for (auto const& it : defines) {
+        gc_count ls = gc_getsize(it.second);
+        size.mem += ls.mem;
+        size.num += ls.num;
+    }
+    return size;
+}

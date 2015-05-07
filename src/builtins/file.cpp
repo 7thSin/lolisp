@@ -26,8 +26,7 @@ obj* file_open(obj* ptr) {
 	string filename = make_stdstring(ptr->car.ptr);
 	advance(ptr);
 	ptr = eval(ptr->car.ptr);
-	fd->car.value = ::open(filename.c_str(), ptr->car.value);
-	
+	fd->car.value = ::open(filename.c_str(), ptr->car.value, S_IRUSR | S_IWUSR);
 	return fd;
 }
 
@@ -54,6 +53,7 @@ obj* file_read(obj* ptr) {
 	std::string sbuf;
 	sbuf.resize(count);
 	ssize_t stfu = ::read(fd, &sbuf[0], count);
+	stfu = stfu;
 	size_t i = 0;
 	return ::addstring(sbuf, i);
 }

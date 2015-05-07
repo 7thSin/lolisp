@@ -21,8 +21,6 @@
 // Main data structure
 
 struct obj {
-    unsigned char    type   = 0;
-    unsigned char    trait  = 0;
     union {
         size_t       value  = 0;
         long long    ivalue;
@@ -30,6 +28,9 @@ struct obj {
         obj*         ptr;
     } car;
     obj*             cdr   = NULL;
+    unsigned short   type   = 0;
+    unsigned short   trait  = 0;
+    
     
     obj() {}
     obj(obj* head, obj* tail) {

@@ -38,8 +38,7 @@ static char* find_builtin(size_t& builtins_index, const char* text, size_t len) 
             continue;
         if (name_it->second.substr(0, len) != string(text))
             continue;
-        string name = "(" + name_it->second;
-        return strtocharp(name);
+        return strtocharp(name_it->second);
     }
     return NULL;
 }
@@ -62,8 +61,7 @@ static char* find_defines(size_t& defines_index, const char* text, size_t len) {
             continue;
         if (name_it->second.substr(0, len) != string(text))
             continue;
-        string name = "(" + name_it->second;
-        return strtocharp(name);
+        return strtocharp(name_it->second);
     }
     return NULL;
 }
@@ -89,10 +87,7 @@ static char* command_generator(const char* text, int state) {
 }
 
 char** autocomplete_functions(const char* text, int start, int end) {
-    char** matches = NULL;
-    if (text[0] == '(') {
-        char* word = const_cast<char*>(&text[1]);
-        matches = rl_completion_matches(word, command_generator);
-    }
-    return matches;
+    if (text[0] == '"')
+        return NULL;
+    return rl_completion_matches(text, command_generator);
 }

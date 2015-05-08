@@ -25,6 +25,22 @@ obj* evalc(obj* ptr) {
     return o;
 }
 
+obj* let(obj* ptr) {
+    obj* ret = new_obj();
+    map<size_t, obj*> defmap;
+    scope.push_back(std::move(defmap));
+    for iterate_elements(ptr->car.ptr, it) {
+        obj* value = eval(it->cdr->car.ptr);
+        if (!value) value = new_obj();
+        scope.back()[it->car.ptr->car.value] = value;
+    }
+    advance(ptr);
+    for iterate_elements(ptr, it)
+        ret = eval(it);
+    scope.pop_back();
+    return ret;
+}
+
 obj* compile_file(obj* ptr) {
     obj* fname = eval(ptr->car.ptr);
     if (fname->trait != TR_CHAR)

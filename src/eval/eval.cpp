@@ -1,5 +1,5 @@
 /*
-* define.cpp
+* call.cpp
 * This file is part of lolisp
 *
 * Copyright (C) 2015 - Rei <https://github.com/sovietspaceship>
@@ -18,29 +18,26 @@
 * along with lolisp. If not, see <http://www.gnu.org/licenses/>.
 */
 
-obj* defun(obj* ptr) {
-    size_t name = ptr->car.ptr->car.value;
-    advance(ptr);
-    ptr->trait = TR_LAMBDA;
-    scope[0].insert({ name, ptr });
-    return new_t();
-}
-obj* define(obj* ptr) {
-    size_t name = ptr->car.ptr->car.value;
-    ptr = eval(ptr->cdr->car.ptr);
-    scope[0][name] = ptr;
-    return new_t();
-}
-obj* lambda(obj* ptr) {
-    if (ptr->type != T_LIST)
-        return new_obj();
-    ptr->trait = TR_LAMBDA;
+// Function pointer
+typedef obj*(*fptr)(obj*);
+
+#include "scope.cpp"
+#include "../builtins/include.h"
+
+obj* eval(obj* ptr) {
+    switch (ptr->type) {
+        case T_ATOM:
+            switch (ptr->trait) {
+                case TR_SYMBOL:
+                    return find_symbol(ptr);
+                default:
+                    return ptr;
+            }
+        case T_LIST:
+            return call(ptr);
+    }
     return ptr;
 }
-obj* defmacro(obj* ptr) {
-    size_t name = ptr->car.ptr->car.value;
-    advance(ptr);
-    ptr->trait = TR_LAMBDA;
-    macros.insert({ name, ptr });
-    return new_t();
-}
+
+#include "call.cpp"
+

@@ -44,10 +44,10 @@ static char* find_builtin(size_t& builtins_index, const char* text, size_t len) 
 }
 
 static char* find_defines(size_t& defines_index, const char* text, size_t len) {
-    auto defines_it = defines.begin();
+    auto defines_it = scope[0].begin();
     for (size_t k = 0; k < defines_index; k++)
         std::advance(defines_it, 1);
-    while (defines_it != defines.end()) {
+    while (defines_it != scope[0].end()) {
         defines_index++;
         if (!defines_it->second) {
             std::advance(defines_it, 1);

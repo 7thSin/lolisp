@@ -44,7 +44,7 @@ obj* lisp_tree(const string& src, size_t& i) {
                 quot->car.value = crc64("quote");
                 ptr->car.ptr = quot;
                 ptr->cdr = lisp_tree(src, ++i);
-                return base;
+                break;
             }
             case '"':
                 ptr->car.ptr = addstring(src, ++i);

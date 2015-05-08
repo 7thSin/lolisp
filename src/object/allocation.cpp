@@ -18,8 +18,7 @@
 * along with lolisp. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Our global scope
-map<size_t, obj*> defines;
+std::vector<map<size_t, obj*>> scope(1);
 
 // Macros
 map<size_t, obj*> macros;
@@ -66,7 +65,7 @@ inline obj* new_list() {
 void add_define(const string name, unsigned type, unsigned trait, size_t value) {
     obj* d = new_obj(type, trait);
     d->car.value = value;
-    defines.insert({ crc64(name), d });
+    scope[0].insert({ crc64(name), d });
 }
 
 size_t new_symbol(string token) {

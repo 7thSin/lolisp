@@ -86,6 +86,9 @@ obj* addstring(const string& src, size_t& i) {
                 case 'n':
                     buf = '\n';
                     break;
+                case 't':
+                    buf = '\t';
+                    break;
             }
             escape = false;
         }

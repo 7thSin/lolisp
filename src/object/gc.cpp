@@ -42,7 +42,7 @@ void gc_mark(obj* ptr) {
 }
 
 void gc_collect() {
-    for (auto const& it : defines)
+    for (auto const& it : scope[0])
         gc_mark(it.second);
     for (auto const& it : macros)
         gc_mark(it.second);

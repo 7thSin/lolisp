@@ -58,7 +58,7 @@ void die(const char* m) {
 #include "parser/lisp_tree.cpp"
 #include "debugger.cpp"
 #include "signal.cpp"
-#include "eval.cpp"
+#include "eval/eval.cpp"
 #include "opts.cpp"
 #include "readline.cpp"
 

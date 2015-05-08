@@ -95,13 +95,13 @@ obj* mod(obj* ptr) {
 
 obj* bit_or(obj* ptr) {
     obj* ret = new_obj(T_ATOM, TR_INT);
-    ret->car.value = ptr->car.ptr->car.value;
+    ret->car.value = eval(ptr->car.ptr)->car.value;
     advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
         switch (it->type) {
             case T_ATOM:
-                ret->car.value |= it->car.value;
+                ret->car.value |= eval(it)->car.value;
         }
     }
     return ret;
@@ -109,13 +109,13 @@ obj* bit_or(obj* ptr) {
 
 obj* bit_and(obj* ptr) {
     obj* ret = new_obj(T_ATOM, TR_INT);
-    ret->car.value = ptr->car.ptr->car.value;
+    ret->car.value = eval(ptr->car.ptr)->car.value;
     advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
         switch (it->type) {
             case T_ATOM:
-                ret->car.value &= it->car.value;
+                ret->car.value &= eval(it)->car.value;
         }
     }
     return ret;
@@ -123,13 +123,13 @@ obj* bit_and(obj* ptr) {
 
 obj* bit_lshift(obj* ptr) {
     obj* ret = new_obj(T_ATOM, TR_INT);
-    ret->car.value = ptr->car.ptr->car.value;
+    ret->car.value = eval(ptr->car.ptr)->car.value;
     advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
         switch (it->type) {
             case T_ATOM:
-                ret->car.value <<= it->car.value;
+                ret->car.value <<= eval(it)->car.value;
         }
     }
     return ret;
@@ -137,13 +137,13 @@ obj* bit_lshift(obj* ptr) {
 
 obj* bit_rshift(obj* ptr) {
     obj* ret = new_obj(T_ATOM, TR_INT);
-    ret->car.value = ptr->car.ptr->car.value;
+    ret->car.value = eval(ptr->car.ptr)->car.value;
     advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
         switch (it->type) {
             case T_ATOM:
-                ret->car.value >>= it->car.value;
+                ret->car.value >>= eval(it)->car.value;
         }
     }
     return ret;
@@ -151,19 +151,19 @@ obj* bit_rshift(obj* ptr) {
 
 obj* bit_not(obj* ptr) {
     obj* ret = new_obj(T_ATOM, TR_INT);
-    ret->car.value = ~ptr->car.ptr->car.value;
+    ret->car.value = ~(eval(ptr->car.ptr)->car.value);
     return ret;
 }
 
 obj* bit_xor(obj* ptr) {
     obj* ret = new_obj(T_ATOM, TR_INT);
-    ret->car.value = ptr->car.ptr->car.value;
+    ret->car.value = eval(ptr->car.ptr)->car.value;
     advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
         switch (it->type) {
             case T_ATOM:
-                ret->car.value ^= it->car.value;
+                ret->car.value ^= eval(it)->car.value;
         }
     }
     return ret;

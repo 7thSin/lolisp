@@ -67,7 +67,7 @@ obj* read(obj* ptr) {
 }
 
 obj* if_b(obj* ptr) {
-    if (!ptr->car.ptr->car.value)
+    if (!eval(ptr->car.ptr)->car.value)
         return new_obj();
     advance(ptr);
     obj* o = new_obj();
@@ -79,7 +79,7 @@ obj* if_b(obj* ptr) {
 obj* while_b(obj* ptr) {
     obj* o = new_obj();
     obj* start = ptr;
-    while (ptr->car.ptr->car.value) {
+    while (eval(ptr->car.ptr)->car.value) {
         for iterate_list(ptr, it)
             o = eval(eval(it->car.ptr));
         ptr = start;

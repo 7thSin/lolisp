@@ -38,7 +38,7 @@ obj* defun(obj* ptr) {
 obj* define(obj* ptr) {
     size_t name = ptr->car.ptr->car.value;
     ptr = eval(ptr->cdr->car.ptr);
-    defines.insert({ name, ptr });
+    defines[name] = ptr;
     return new_t();
 }
 obj* lambda(obj* ptr) {

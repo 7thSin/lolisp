@@ -92,6 +92,16 @@ obj* if_b(obj* ptr) {
     return o;
 }
 
+obj* cond(obj* ptr) {
+    obj* o = new_obj();
+    for iterate_elements(ptr, it) {
+        o = if_b(it);
+        if (o->car.value)
+            break;
+    }
+    return o;
+}
+
 obj* while_b(obj* ptr) {
     obj* o = new_obj();
     obj* start = ptr;
@@ -121,6 +131,7 @@ obj* recur(obj* ptr) {
         advance(nptr);
     }
     obj_context = base;
+    scope.pop_back();
     longjmp(*stack_context.back(), 1);
     return new_obj();
 }

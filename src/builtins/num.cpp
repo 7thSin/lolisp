@@ -168,3 +168,18 @@ obj* bit_xor(obj* ptr) {
     }
     return ret;
 }
+
+obj* equal(obj* ptr) {
+    obj* ret = new_obj(T_ATOM, TR_INT);
+    ret->car.value = eval(ptr->car.ptr)->car.value;
+    advance(ptr);
+    for iterate_elements(ptr, it) {
+        it = eval(it);
+        switch (it->type) {
+            case T_ATOM:
+                ret->car.value ^= eval(it)->car.value;
+        }
+    }
+    ret->car.value = !ret->car.value;
+    return ret;
+}

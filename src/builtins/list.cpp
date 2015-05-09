@@ -74,6 +74,24 @@ obj* set_trait(obj* ptr) {
     return ptr;
 }
 
+obj* check_trait(obj* ptr) {
+    size_t trait = eval(ptr->car.ptr)->car.value;
+    advance(ptr);
+    ptr = eval(ptr->car.ptr);
+    obj* ret = new_obj();
+    ret->car.value = (ptr->trait == trait);
+    return ret;
+}
+
+obj* check_type(obj* ptr) {
+    size_t type = eval(ptr->car.ptr)->car.value;
+    advance(ptr);
+    ptr = eval(ptr->car.ptr);
+    obj* ret = new_obj();
+    ret->car.value = (ptr->type == type);
+    return ret;
+}
+
 obj* objdump(obj* ptr) {
     obj* eptr = eval(ptr->car.ptr);
     objdump(eptr, 0, "from REPL");

@@ -1,10 +1,9 @@
 ; Recursion test
 
 (defun main (x)
-    (if (xor x 10001)
-       (format "~d: ~d~%" (xor x 10) x)
-       (main (+ x 1))))
+    (if (xor x max-count)
+       (format "~d~%" x)
+       (recur (+ x 1))))
 
-(main 1)
-
-
+(let ((max-count *max*))
+    (main 1))

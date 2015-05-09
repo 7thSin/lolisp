@@ -1,4 +1,4 @@
 (define i 0)
-(while (xor i 12)
+(loop (xor i 12)
        (format "~d~%" i)
        (define i (+ i 1)))

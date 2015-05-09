@@ -12,6 +12,8 @@ You can find some examples in the examples folder.
 For a complete list of commands and how to use them, see src/builtins/include.h
 and src/lisp/stdlib.loli.
 
+Dependencies: libreadline, any c++1y/14 compiler.
+
 ## Interpreter
 
 The interpreter is written in C++ for the core part, while most of the functions
@@ -53,7 +55,7 @@ The language is inspired by both Common Lisp and Scheme, with the main differenc
 being Haskell-inspired non-strict evaluation.
 Functional programming is encouraged. Recursive and continuation styles are favoured.
 It's possible though to use a more imperative style, being Lolisp a general-purpose language.
-Symbols are resolved in a dynamic scope, so Lolisp searches in the current environment
+Symbols are resolved in a lexical scope, so Lolisp searches in the current environment
 for an occurrence of the symbol, and replaces with the bound objects. If no objects
 are found in any scope, the symbol, being an atom, evaluates to itself.
 This allows for partially-applicable functions, lambda capture and lazy evaluation of symbols.
@@ -81,4 +83,4 @@ Released under GPLv2.
 Written by Rei <https://github.com/sovietspaceship>
 
 Thanks to:
-Lain <https://github.com/serialexperiments> for his invaluable contributions, tests, and suggestions.
+* Lain <https://github.com/serialexperiments> for his invaluable contributions, tests, and suggestions.

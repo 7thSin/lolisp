@@ -76,6 +76,9 @@ exception on std::regex. Update your compiler, for your own good.
 
 Released under GPLv2.
 
-## Author
+## Author and contributors
 
-Rei <https://github.com/sovietspaceship>
+Written by Rei <https://github.com/sovietspaceship>
+
+Thanks to:
+Lain <https://github.com/serialexperiments> for his invaluable contributions, tests, and suggestions.

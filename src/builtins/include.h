@@ -72,6 +72,7 @@ map<size_t, fptr> builtins = {
     { new_symbol("cat"), builtin::cat },
     { new_symbol("gc-size"), builtin::gc_size },
     { new_symbol("getenv"), builtin::getenv },
+    { new_symbol("recur"), builtin::recur },
     { new_symbol("mod"), builtin::mod },
     { new_symbol("or"), builtin::bit_or },
     { new_symbol("and"), builtin::bit_and },

@@ -111,3 +111,16 @@ obj* readlinef(obj* ptr) {
     string src = ::readline(promptstr);
     return lisp_tree(src)->car.ptr;
 }
+
+obj* recur(obj* ptr) {
+    obj* nptr = new_list();
+    obj* base = nptr;
+    for iterate_list(ptr, it) {
+        nptr->car.ptr = eval(it->car.ptr);
+        nptr->cdr = new_list();
+        advance(nptr);
+    }
+    obj_context = base;
+    longjmp(*stack_context.back(), 1);
+    return new_obj();
+}

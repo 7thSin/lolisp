@@ -32,6 +32,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <csignal>
+#include <setjmp.h>
 
 using std::stringstream;
 using std::fstream;

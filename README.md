@@ -9,7 +9,8 @@ The following description applies to the current state of the project, not the
 final design.
 
 You can find some examples in the examples folder.
-For a complete list of commands and how to use them, see src/builtins/include.h.
+For a complete list of commands and how to use them, see src/builtins/include.h
+and src/lisp/stdlib.loli.
 
 ## Interpreter
 

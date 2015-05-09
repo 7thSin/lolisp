@@ -23,9 +23,14 @@
 // open a gap in gensokyo
 obj* file_open(obj* ptr) {
 	obj* fd = new_obj(T_ATOM, TR_INT);
+	ptr->car.ptr = eval(ptr->car.ptr);
+	while (ptr->car.ptr->type != T_LIST)
+        ptr->car.ptr = debugger(DBG_REPLACE, "file-open: Invalid string for filename.", ptr->car.ptr);
 	string filename = make_stdstring(ptr->car.ptr);
 	advance(ptr);
 	ptr = eval(ptr->car.ptr);
+	while (ptr->trait > TR_INT)
+        ptr = debugger(DBG_REPLACE, "file-open: Invalid mode flag.", ptr->car.ptr);
 	fd->car.value = ::open(filename.c_str(), ptr->car.value, S_IRUSR | S_IWUSR);
 	return fd;
 }
@@ -35,7 +40,9 @@ obj* file_open(obj* ptr) {
 obj* file_write(obj* ptr) {
 	obj* nbytes = new_obj(T_ATOM, TR_INT);
 	obj* a1 = eval(ptr->car.ptr);
-	int fd = a1->car.value;
+	while (a1->trait > TR_INT)
+        a1 = debugger(DBG_REPLACE, "file-open: Invalid value for file descriptor.", a1);
+    int fd = a1->car.value;
 	advance(ptr);
 	string data = make_stdstring(ptr->car.ptr);
 	nbytes->car.value = ::write(fd, data.data(), data.length());
@@ -46,6 +53,8 @@ obj* file_write(obj* ptr) {
 // https://github.com/serialexperiments <lain@lain.org.uk>
 obj* file_read(obj* ptr) {
 	obj* a1 = eval(ptr->car.ptr);
+	while (a1->trait > TR_INT)
+        a1 = debugger(DBG_REPLACE, "file-open: Invalid value for file descriptor.", a1);
 	int fd = a1->car.value;
 	advance(ptr);
 	obj* a2 = eval(ptr->car.ptr);
@@ -64,6 +73,8 @@ obj* file_read(obj* ptr) {
 obj* file_close(obj* ptr) {
 	obj* status = new_obj(T_ATOM, TR_INT);
 	ptr = eval(ptr->car.ptr);
+	while (ptr->trait > TR_INT)
+        ptr = debugger(DBG_REPLACE, "file-open: Invalid value for file descriptor.", ptr);
 	int fd = ptr->car.value;
 
 	status->car.value = ::close(fd);

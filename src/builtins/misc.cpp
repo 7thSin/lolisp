@@ -20,6 +20,8 @@
 
 obj* crc(obj* ptr) {
     obj* result = new_obj(T_ATOM, TR_UINT);
+    while (!ptr->car.ptr->type != T_LIST)
+        ptr->car.ptr = debugger(DBG_REPLACE, "crc: invalid argument. Expected list.", ptr->car.ptr);
     result->car.value = crc64(make_stdstring(ptr->car.ptr));
     return result;
 }

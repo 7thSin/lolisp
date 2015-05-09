@@ -28,8 +28,12 @@ obj* shell(obj* ptr) {
     string cmd;
     if (!ptr->car.ptr)
         cmd = "/bin/sh";
-    else
+    else {
+        ptr->car.ptr = eval(ptr->car.ptr);
+        while (ptr->car.ptr->type != T_LIST)
+            ptr->car.ptr = debugger(DBG_REPLACE, "shell: invalid argument. Expected list or string.", ptr->car.ptr);
         cmd = make_stdstring(ptr->car.ptr);
+    }
     int a = system(cmd.c_str());
     lolwut->car.value = a;
     return lolwut;
@@ -43,7 +47,10 @@ obj* set_signal(obj* ptr) {
 }
 
 obj* getenv(obj* ptr) {
-    string str = make_stdstring(eval(ptr->car.ptr));
+    ptr = eval(ptr->car.ptr);
+    while (ptr->type != T_LIST)
+        ptr = debugger(DBG_REPLACE, "getenv: invalid argument. Expected list or string.", ptr);
+    string str = make_stdstring(ptr);
     str = ::getenv(str.c_str());
     size_t i = 0;
     return ::addstring(str, i);

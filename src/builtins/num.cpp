@@ -24,10 +24,9 @@ obj* sum(obj* ptr) {
     Num<std::plus<double>> res;
     for iterate_elements(ptr, it) {
         it = eval(it);
-        switch (it->type) {
-            case T_ATOM:
-                res.apply(it);
-        }
+        while (it->type > T_ATOM)
+            it = debugger(DBG_REPLACE, "+: invalid argument. Expected atom.", it);
+        res.apply(it);
     }
     obj* result = new_obj(T_ATOM, res.trait);
     result->car.value = res.get();
@@ -41,10 +40,9 @@ obj* sub(obj* ptr) {
     advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
-        switch (it->type) {
-            case T_ATOM:
-                res.apply(it);
-        }
+        while (it->type > T_ATOM)
+            it = debugger(DBG_REPLACE, "-: invalid argument. Expected atom.", it);
+        res.apply(it);
     }
     obj* result = new_obj(T_ATOM, res.trait);
     result->car.value = res.get();
@@ -55,10 +53,9 @@ obj* mult(obj* ptr) {
     res.value = 1.0;
     for iterate_elements(ptr, it) {
         it = eval(it);
-        switch (it->type) {
-            case T_ATOM:
-                res.apply(it);
-        }
+        while (it->type > T_ATOM)
+            it = debugger(DBG_REPLACE, "*: invalid argument. Expected atom.", it);
+        res.apply(it);
     }
     obj* result = new_obj(T_ATOM, res.trait);
     result->car.value = res.get();
@@ -70,10 +67,9 @@ obj* div(obj* ptr) {
     advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
-        switch (it->type) {
-            case T_ATOM:
-                res.apply(it);
-        }
+        while (it->type > T_ATOM)
+            it = debugger(DBG_REPLACE, "/: invalid argument. Expected atom.", it);
+        res.apply(it);
     }
     obj* result = new_obj(T_ATOM, res.trait);
     result->car.value = res.get();
@@ -85,9 +81,9 @@ obj* mod(obj* ptr) {
     advance(ptr);
     obj* arg2 = eval(ptr->car.ptr);
     while (arg1->trait > TR_INT)
-        arg1 = debugger(DBG_REPLACE, "Invalid dividend for (mod).", arg1);
+        arg1 = debugger(DBG_REPLACE, "mod: Invalid dividend.", arg1);
     while (arg2->trait > TR_INT)
-        arg2 = debugger(DBG_REPLACE, "Invalid divisor for (mod).", arg2);
+        arg2 = debugger(DBG_REPLACE, "mod: Invalid divisor.", arg2);
     obj* ret = new_obj(T_ATOM, TR_INT);
     ret->car.value = arg1->car.value % arg2->car.value;
     return ret;
@@ -99,10 +95,9 @@ obj* bit_or(obj* ptr) {
     advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
-        switch (it->type) {
-            case T_ATOM:
-                ret->car.value |= eval(it)->car.value;
-        }
+        while (it->type > T_ATOM)
+            it = debugger(DBG_REPLACE, "or: Invalid argument. Expected non-list.", it);
+        ret->car.value |= eval(it)->car.value;
     }
     return ret;
 }
@@ -113,10 +108,9 @@ obj* bit_and(obj* ptr) {
     advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
-        switch (it->type) {
-            case T_ATOM:
-                ret->car.value &= eval(it)->car.value;
-        }
+        while (it->type > T_ATOM)
+            it = debugger(DBG_REPLACE, "and: Invalid argument. Expected non-list.", it);    
+        ret->car.value &= eval(it)->car.value;
     }
     return ret;
 }
@@ -127,10 +121,9 @@ obj* bit_lshift(obj* ptr) {
     advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
-        switch (it->type) {
-            case T_ATOM:
-                ret->car.value <<= eval(it)->car.value;
-        }
+        while (it->type > T_ATOM)
+            it = debugger(DBG_REPLACE, "lshift: Invalid argument. Expected non-list.", it);
+        ret->car.value <<= eval(it)->car.value;
     }
     return ret;
 }
@@ -141,10 +134,9 @@ obj* bit_rshift(obj* ptr) {
     advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
-        switch (it->type) {
-            case T_ATOM:
-                ret->car.value >>= eval(it)->car.value;
-        }
+        while (it->type > T_ATOM)
+            it = debugger(DBG_REPLACE, "rshift: Invalid argument. Expected non-list.", it);
+        ret->car.value >>= eval(it)->car.value;
     }
     return ret;
 }
@@ -161,10 +153,9 @@ obj* bit_xor(obj* ptr) {
     advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
-        switch (it->type) {
-            case T_ATOM:
-                ret->car.value ^= eval(it)->car.value;
-        }
+        while (it->type > T_ATOM)
+            it = debugger(DBG_REPLACE, "xor: Invalid argument. Expected non-list.", it);
+        ret->car.value ^= eval(it)->car.value;
     }
     return ret;
 }
@@ -175,10 +166,7 @@ obj* equal(obj* ptr) {
     advance(ptr);
     for iterate_elements(ptr, it) {
         it = eval(it);
-        switch (it->type) {
-            case T_ATOM:
-                ret->car.value ^= eval(it)->car.value;
-        }
+        ret->car.value ^= eval(it)->car.value;
     }
     ret->car.value = !ret->car.value;
     return ret;

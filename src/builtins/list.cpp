@@ -21,14 +21,14 @@
 obj* car(obj* v) {
     obj* arg = eval(v->car.ptr);
     while (arg->type != T_LIST)
-        arg = debugger(DBG_REPLACE, "Invalid list.", arg);
+        arg = debugger(DBG_REPLACE, "car: Invalid list.", arg);
     return arg->car.ptr;
 }
 
 obj* cdr(obj* v) {
     obj* arg = eval(v->car.ptr);
-    if (arg->type != T_LIST)
-        return new_obj();
+    while (arg->type != T_LIST)
+        arg = debugger(DBG_REPLACE, "cdr: Invalid list.", arg);
     return arg->cdr;
 }
 
@@ -61,6 +61,8 @@ obj* length(obj* ptr) {
 }
 
 obj* quote(obj* ptr) {
+    while (!ptr->car.ptr)
+        ptr->car.ptr = debugger(DBG_REPLACE, "quote: Too few arguments.");
     return ptr->car.ptr;
 }
 

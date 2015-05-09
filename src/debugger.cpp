@@ -29,10 +29,10 @@ obj* debugger(unsigned options = DBG_TERM, const char* message = NULL, obj* crim
         objdump(criminal);
     switch (options) {
         case DBG_TERM:
-            prompt = "λ Quit? ";
+            prompt = "λ>> Quit? ";
             break;
         case DBG_REPLACE:
-            prompt = "λ Enter a new value: ";
+            prompt = "λ>> Enter a new value: ";
             break;
     }
     if (message)

@@ -44,6 +44,8 @@ obj* format(obj* ptr) {
                     cout << '\t';
                     continue;
             }
+            while (!arg)
+                arg = debugger(DBG_REPLACE, "format: Missing argument.", arg);
             obj* val = eval(arg->car.ptr);
             switch (it->car.value) {
                 case 'd':

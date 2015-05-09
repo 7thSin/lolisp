@@ -1,5 +1,5 @@
 /*
-* parser.cpp
+* macro.cpp
 * This file is part of lolisp
 *
 * Copyright (C) 2015 - Rei <https://github.com/sovietspaceship>
